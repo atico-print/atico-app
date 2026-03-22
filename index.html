@@ -156,6 +156,16 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
 .admin-close-btn{background:transparent;color:var(--text2);border:1.5px solid var(--gray2);border-radius:100px;padding:10px 24px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;margin-top:8px}
 .admin-login{text-align:center;padding:20px 0}
 .admin-login-title{font-size:16px;font-weight:500;color:var(--text);margin-bottom:16px}
+.admin-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--gray)}
+.admin-item-name-input{flex:1;border:1.5px solid var(--gray2);border-radius:var(--radius-sm);padding:5px 8px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none}
+.admin-item-name-input:focus{border-color:var(--blue)}
+.admin-del-btn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:0 4px;flex-shrink:0}
+.admin-del-btn:hover{color:var(--fuchsia)}
+.admin-add-row{display:flex;gap:8px;margin-top:10px}
+.admin-add-input{flex:1;border:1.5px solid var(--gray2);border-radius:var(--radius-sm);padding:6px 10px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none}
+.admin-add-input:focus{border-color:var(--blue)}
+.admin-add-btn{background:var(--blue);color:#fff;border:none;border-radius:100px;padding:6px 14px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.admin-add-btn:hover{background:var(--blue-dark)}
 </style>
 </head>
 <body>
@@ -292,31 +302,41 @@ var SURL='https://script.google.com/macros/s/AKfycbyjN9U2Stotr8nfc8SyGF9SJ5jjG4W
 var ADMIN_PASS='atico2024';
 
 var DEFAULT_CATALOG=[
-  {n:'Fotos Comunes',ic:'&#128444;',p:[
-    {n:'Foto Mini Polaroid 18 Unidades',d:'Papel Comun',p:11500},
-    {n:'Foto Polaroid 15 Unidades',d:'Papel Comun',p:11500},
-    {n:'Foto 10x15',d:'Papel Comun',p:1540},
-    {n:'Foto 13x18',d:'Papel Comun',p:2200},
-    {n:'Foto 15x21',d:'Papel Comun',p:3700},
-    {n:'Foto 20x30',d:'Papel Comun',p:5300},
-    {n:'Foto 30x42',d:'Papel Comun',p:7700},
-    {n:'Foto 33x48',d:'Papel Comun',p:9400},
-    {n:'Foto 10x15 Pack x10',d:'Papel Comun',p:12200},
-    {n:'Foto 10x15 Pack x20',d:'Papel Comun',p:18000},
-    {n:'Foto 10x15 Pack x50',d:'Papel Comun',p:29000},
-    {n:'Foto 13x18 Pack x10',d:'Papel Comun',p:19000},
-    {n:'Foto 13x18 Pack x20',d:'Papel Comun',p:32000},
-    {n:'Foto 13x18 Pack x50',d:'Papel Comun',p:61000}
-  ]},
-  {n:'Fotos Premium',ic:'&#10024;',p:[
+  {n:'Polaroids',ic:'&#128247;',p:[
+    {n:'Foto Mini Polaroid 18 Unidades',d:'Papel Standard',p:11500},
+    {n:'Foto Polaroid 15 Unidades',d:'Papel Standard',p:11500},
     {n:'Foto Mini Polaroid 18 Unidades',d:'Papel Premium',p:17000},
     {n:'Foto Polaroid 15 Unidades',d:'Papel Premium',p:17000},
+    {n:'Polaroids para Colgar',d:'30 fotos con hilo y broches',p:38000},
+    {n:'Polaroids para Colgar Led',d:'30 fotos con alambre led y broches',p:41000},
+    {n:'Polaroids Iman Premium',d:'Tamano de la Foto: 10x8cm',p:3600},
+    {n:'Polaroids con Sobre Estuche',d:'15 fotos',p:25000}
+  ]},
+  {n:'Foto Standard',ic:'&#128444;',p:[
+    {n:'Foto 10x15',d:'Papel Standard',p:1540},
+    {n:'Foto 13x18',d:'Papel Standard',p:2200},
+    {n:'Foto 15x21',d:'Papel Standard',p:3700},
+    {n:'Foto 20x30',d:'Papel Standard',p:5300},
+    {n:'Foto 30x42',d:'Papel Standard',p:7700},
+    {n:'Foto 33x48',d:'Papel Standard',p:9400}
+  ]},
+  {n:'Foto Premium',ic:'&#10024;',p:[
     {n:'Foto 10x15',d:'Papel Premium',p:2600},
     {n:'Foto 13x18',d:'Papel Premium',p:2900},
     {n:'Foto 15x21',d:'Papel Premium',p:5100},
     {n:'Foto 20x30',d:'Papel Premium',p:7200},
     {n:'Foto 30x42',d:'Papel Premium',p:12800},
-    {n:'Foto 33x48',d:'Papel Premium',p:16000},
+    {n:'Foto 33x48',d:'Papel Premium',p:16000}
+  ]},
+  {n:'Pack Foto Standard',ic:'&#128230;',p:[
+    {n:'Foto 10x15 Pack x10',d:'Papel Standard',p:12200},
+    {n:'Foto 10x15 Pack x20',d:'Papel Standard',p:18000},
+    {n:'Foto 10x15 Pack x50',d:'Papel Standard',p:29000},
+    {n:'Foto 13x18 Pack x10',d:'Papel Standard',p:19000},
+    {n:'Foto 13x18 Pack x20',d:'Papel Standard',p:32000},
+    {n:'Foto 13x18 Pack x50',d:'Papel Standard',p:61000}
+  ]},
+  {n:'Pack Foto Premium',ic:'&#128081;',p:[
     {n:'Foto 10x15 Pack x10',d:'Papel Premium',p:17000},
     {n:'Foto 10x15 Pack x20',d:'Papel Premium',p:27000},
     {n:'Foto 10x15 Pack x50',d:'Papel Premium',p:51000},
@@ -329,34 +349,37 @@ var DEFAULT_CATALOG=[
     {n:'Fotolibro Clasico 15x21',d:'50 Fotos - 35 Hojas',p:67000},
     {n:'Fotolibro Premium 20x30',d:'80 Fotos - 35 Hojas',p:100000},
     {n:'Pola Book 15x21',d:'15 Polaroids - 25 Hojas',p:62000},
-    {n:'Pola Book 20x30',d:'15 Polaroids - 35 Hojas',p:91000}
+    {n:'Pola Book 20x30',d:'15 Polaroids - 35 Hojas',p:91000},
+    {n:'Accesorios Scrapbooking',d:'',p:8500}
   ]},
-  {n:'Productos',ic:'&#127873;',p:[
-    {n:'Barra x1',d:'Tamano de la Foto: 10x8cm',p:27000},
-    {n:'Barra x2',d:'Tamano de la Foto: 10x8cm',p:34000},
-    {n:'Barra x3',d:'Tamano de la Foto: 10x8cm',p:41000},
-    {n:'Barra 20x20',d:'Tamano de la Foto: 20x20cm',p:46000},
-    {n:'Barra Calendario',d:'Tamano de la Foto: 10x8cm',p:58000},
-    {n:'Calendario Iman',d:'Tamano de la Foto: 9x7cm',p:46000},
-    {n:'Polaroids para Colgar',d:'30 fotos con hilo y broches',p:38000},
-    {n:'Polaroids para Colgar Led',d:'30 fotos con alambre led y broches',p:41000},
-    {n:'Polaroids Iman Premium',d:'Tamano de la Foto: 10x8cm',p:3600},
+  {n:'Portaretratos',ic:'&#128188;',p:[
+    {n:'Barra de Madera x 1 Foto',d:'Tamano de la Foto: 10x8cm',p:27000},
+    {n:'Barra de Madera x 2 Fotos',d:'Tamano de la Foto: 10x8cm',p:34000},
+    {n:'Barra de Madera x 3 Fotos',d:'Tamano de la Foto: 10x8cm',p:41000},
+    {n:'Barra de Madera x 1 Foto de 20x20',d:'Tamano de la Foto: 20x20cm',p:46000}
+  ]},
+  {n:'Calendarios',ic:'&#128197;',p:[
+    {n:'Barra de Madera Calendario',d:'Tamano de la Foto: 10x8cm',p:58000},
+    {n:'Calendario Iman',d:'Tamano de la Foto: 9x7cm',p:46000}
+  ]},
+  {n:'Regalos',ic:'&#127873;',p:[
     {n:'Rompecabezas Iman',d:'Tamano de la Foto: 15x21cm',p:28000},
     {n:'Memo Test',d:'24 Piezas - Tamano de la Foto: 7x7cm',p:31000},
     {n:'Tiras de Fotos',d:'5 tiras - 4 fotos cada una',p:4000},
-    {n:'Poster Disney Pixar',d:'15x21 con barra de Madera',p:48000},
-    {n:'Album de Figuritas',d:'30 Figuritas - Tamano: 20x30cm',p:45000},
-    {n:'Album de Figuritas San Valentin',d:'30 Figuritas - Tamano: 20x30cm',p:27000},
-    {n:'Tatoo',d:'Tamano A4',p:33000},
-    {n:'Cartas UNO',d:'',p:38000},
-    {n:'Polaroids con Sobre Estuche',d:'15 fotos',p:25000},
-    {n:'Accesorios Scrapbooking',d:'',p:8500}
+    {n:'Poster Disney Pixar',d:'Tamano de la Foto: 15x21 con barra de Madera',p:48000},
+    {n:'Foto Tatoo',d:'Tamano A4',p:33000},
+    {n:'Cartas UNO',d:'',p:38000}
   ]}
 ];
 
 function loadCatalog(){
-  try{var s=localStorage.getItem('atico_prices');if(s){var saved=JSON.parse(s);for(var ci=0;ci<DEFAULT_CATALOG.length;ci++){for(var pi=0;pi<DEFAULT_CATALOG[ci].p.length;pi++){var key=ci+'-'+pi;if(saved[key]!==undefined)DEFAULT_CATALOG[ci].p[pi].p=saved[key];}}}  }catch(e){}
-  return DEFAULT_CATALOG;
+  try{
+    var s=localStorage.getItem('atico_catalog');
+    if(s){return JSON.parse(s);}
+    var old=localStorage.getItem('atico_prices');
+    if(old){var saved=JSON.parse(old);for(var ci=0;ci<DEFAULT_CATALOG.length;ci++){for(var pi=0;pi<DEFAULT_CATALOG[ci].p.length;pi++){var key=ci+'-'+pi;if(saved[key]!==undefined)DEFAULT_CATALOG[ci].p[pi].p=saved[key];}}}
+  }catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULT_CATALOG));
 }
 var C=loadCatalog();
 
@@ -634,33 +657,67 @@ function checkAdminPass(){
 function closeAdmin(){document.getElementById('admin-overlay').classList.remove('visible');}
 function renderAdminPanel(){
   var panel=document.getElementById('admin-panel');
-  var html='<div class="admin-title">ADMIN</div><div class="admin-sub">Edita los precios y hace clic en Guardar</div>';
+  var html='<div class="admin-title">ADMIN</div><div class="admin-sub">Edita nombres, precios, agrega o elimina productos</div>';
   for(var ci=0;ci<C.length;ci++){
     html+='<div class="admin-cat"><div class="admin-cat-title">'+C[ci].n+'</div>';
     for(var pi=0;pi<C[ci].p.length;pi++){
-      html+='<div class="admin-item"><span class="admin-item-name">'+C[ci].p[pi].n+(C[ci].p[pi].d?' <small style="color:var(--text3)">'+C[ci].p[pi].d+'</small>':'')+'</span><input class="admin-price-input" type="number" data-ci="'+ci+'" data-pi="'+pi+'" value="'+C[ci].p[pi].p+'"></div>';
+      html+='<div class="admin-item">';
+      html+='<input class="admin-item-name-input" type="text" data-ci="'+ci+'" data-pi="'+pi+'" data-field="n" value="'+C[ci].p[pi].n+'" placeholder="Nombre">';
+      html+='<input class="admin-item-name-input" type="text" data-ci="'+ci+'" data-pi="'+pi+'" data-field="d" value="'+C[ci].p[pi].d+'" placeholder="Detalle" style="max-width:120px">';
+      html+='<input class="admin-price-input" type="number" data-ci="'+ci+'" data-pi="'+pi+'" value="'+C[ci].p[pi].p+'">';
+      html+='<button class="admin-del-btn" onclick="adminDelProduct('+ci+','+pi+')">&#10005;</button>';
+      html+='</div>';
     }
+    html+='<div class="admin-add-row">';
+    html+='<input class="admin-add-input" id="add-n-'+ci+'" placeholder="Nombre del producto">';
+    html+='<input class="admin-add-input" id="add-d-'+ci+'" placeholder="Detalle" style="max-width:110px">';
+    html+='<input class="admin-add-input" id="add-p-'+ci+'" type="number" placeholder="Precio" style="max-width:90px">';
+    html+='<button class="admin-add-btn" onclick="adminAddProduct('+ci+')">+ Agregar</button>';
+    html+='</div>';
     html+='</div>';
   }
-  html+='<button class="admin-save-btn" onclick="saveAdminPrices()">Guardar precios</button>';
+  html+='<button class="admin-save-btn" onclick="saveAdminData()">Guardar todo</button>';
   html+='<button class="admin-close-btn" onclick="closeAdmin()">Cerrar</button>';
   panel.innerHTML=html;
 }
-function saveAdminPrices(){
-  var inputs=document.querySelectorAll('.admin-price-input');
-  var saved={};
-  for(var i=0;i<inputs.length;i++){
-    var ci=parseInt(inputs[i].dataset.ci);
-    var pi=parseInt(inputs[i].dataset.pi);
-    var val=parseInt(inputs[i].value)||0;
-    C[ci].p[pi].p=val;
-    saved[ci+'-'+pi]=val;
+function adminDelProduct(ci,pi){
+  if(!confirm('Eliminar '+C[ci].p[pi].n+'?'))return;
+  C[ci].p.splice(pi,1);
+  saveToStorage();
+  renderAdminPanel();
+}
+function adminAddProduct(ci){
+  var n=document.getElementById('add-n-'+ci).value.trim();
+  var d=document.getElementById('add-d-'+ci).value.trim();
+  var p=parseInt(document.getElementById('add-p-'+ci).value)||0;
+  if(!n){alert('Ingresa el nombre del producto.');return;}
+  C[ci].p.push({n:n,d:d,p:p});
+  saveToStorage();
+  renderAdminPanel();
+}
+function saveAdminData(){
+  var nameInputs=document.querySelectorAll('.admin-item-name-input');
+  for(var i=0;i<nameInputs.length;i++){
+    var ci=parseInt(nameInputs[i].dataset.ci);
+    var pi=parseInt(nameInputs[i].dataset.pi);
+    var field=nameInputs[i].dataset.field;
+    C[ci].p[pi][field]=nameInputs[i].value;
   }
-  try{localStorage.setItem('atico_prices',JSON.stringify(saved));}catch(e){}
+  var priceInputs=document.querySelectorAll('.admin-price-input');
+  for(var i=0;i<priceInputs.length;i++){
+    var ci=parseInt(priceInputs[i].dataset.ci);
+    var pi=parseInt(priceInputs[i].dataset.pi);
+    C[ci].p[pi].p=parseInt(priceInputs[i].value)||0;
+  }
+  saveToStorage();
   closeAdmin();
   selCat(st.ci);
-  alert('Precios guardados correctamente!');
+  alert('Cambios guardados correctamente!');
 }
+function saveToStorage(){
+  try{localStorage.setItem('atico_catalog',JSON.stringify(C));}catch(e){}
+}
+function saveAdminPrices(){saveAdminData();}
 </script>
 </body>
 </html>
