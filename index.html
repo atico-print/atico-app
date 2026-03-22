@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ATICO | Diseno + Fotos</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"><\/script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--blue:#3D3BF3;--blue-dark:#2a29c4;--blue-light:#eeeffe;--fuchsia:#FF2D9B;--fuchsia-light:#fff0f8;--white:#ffffff;--gray:#f5f5f7;--gray2:#e8e8ed;--text:#111;--text2:#555;--text3:#999;--radius:16px;--radius-sm:10px}
@@ -252,7 +252,7 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
 emailjs.init('eTfGX4pLzh_1EMPpq');
 var SURL='https://script.google.com/macros/s/AKfycbyjN9U2Stotr8nfc8SyGF9SJ5jjG4W6NIL44Lwx5EUXQp6ihm5ifNxYzuXalAJ8htvZ/exec';
 var C=[
-  {n:'Fotos Comunes',p:[
+  {n:'Fotos Comunes',ic:'&#128444;',p:[
     {n:'Foto Mini Polaroid 18 Unidades',d:'Papel Comun',p:11500},
     {n:'Foto Polaroid 15 Unidades',d:'Papel Comun',p:11500},
     {n:'Foto 10x15',d:'Papel Comun',p:1540},
@@ -268,7 +268,7 @@ var C=[
     {n:'Foto 13x18 Pack x20',d:'Papel Comun',p:32000},
     {n:'Foto 13x18 Pack x50',d:'Papel Comun',p:61000}
   ]},
-  {n:'Fotos Premium',p:[
+  {n:'Fotos Premium',ic:'&#10024;',p:[
     {n:'Foto Mini Polaroid 18 Unidades',d:'Papel Premium',p:17000},
     {n:'Foto Polaroid 15 Unidades',d:'Papel Premium',p:17000},
     {n:'Foto 10x15',d:'Papel Premium',p:2600},
@@ -284,14 +284,14 @@ var C=[
     {n:'Foto 13x18 Pack x20',d:'Papel Premium',p:45000},
     {n:'Foto 13x18 Pack x50',d:'Papel Premium',p:87000}
   ]},
-  {n:'Fotolibros',p:[
+  {n:'Fotolibros',ic:'&#128214;',p:[
     {n:'Fotolibro Mini 10x15',d:'25 Fotos',p:42000},
     {n:'Fotolibro Clasico 15x21',d:'50 Fotos - 35 Hojas',p:67000},
     {n:'Fotolibro Premium 20x30',d:'80 Fotos - 35 Hojas',p:100000},
     {n:'Pola Book 15x21',d:'15 Polaroids - 25 Hojas',p:62000},
     {n:'Pola Book 20x30',d:'15 Polaroids - 35 Hojas',p:91000}
   ]},
-  {n:'Productos',p:[
+  {n:'Productos',ic:'&#127873;',p:[
     {n:'Barra x1',d:'Tamano de la Foto: 10x8cm',p:27000},
     {n:'Barra x2',d:'Tamano de la Foto: 10x8cm',p:34000},
     {n:'Barra x3',d:'Tamano de la Foto: 10x8cm',p:41000},
@@ -320,7 +320,7 @@ for(var ti=0;ti<C.length;ti++){
   (function(i){
     var t=document.createElement('button');
     t.className='cat-tab'+(i===0?' active':'');
-    t.textContent=C[i].n;
+    t.innerHTML=C[i].ic+' '+C[i].n;
     t.onclick=function(){selCat(i);};
     tabsEl.appendChild(t);
   })(ti);
@@ -341,7 +341,8 @@ function renderProds(){
     (function(i){
       var p=prods[i];
       var row=document.createElement('div');row.className='product-row';
-      row.innerHTML='<div class="product-row-left"><div><div class="product-row-name">'+p.n+'</div>'+(p.d?'<div class="product-row-desc">'+p.d+'</div>':'')+'</div></div><div class="product-row-price">'+fmt(p.p)+'</div><div class="product-row-check">v</div>';
+      var ico='<div style="width:32px;height:32px;border-radius:8px;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">'+C[st.ci].ic+'</div>';
+      row.innerHTML='<div class="product-row-left">'+ico+'<div><div class="product-row-name">'+p.n+'</div>'+(p.d?'<div class="product-row-desc">'+p.d+'</div>':'')+'</div></div><div class="product-row-price">'+fmt(p.p)+'</div><div class="product-row-check">&#10003;</div>';
       row.onclick=function(){selProd(i,row);};
       list.appendChild(row);
     })(pi);
@@ -456,7 +457,7 @@ async function confirmOrder(){
   setLdr('Listo!','',100);
   await new Promise(function(r){setTimeout(r,500);});
   hideLdr();
-  var wa='Nuevo pedido ATICO\nN ' +st.onum+'\n\nProducto: '+st.prod.n+'\nCategoria: '+cat.n+(st.prod.d?'\nDetalle: '+st.prod.d:'')+'\nCantidad: '+st.qty+' unidad'+(st.qty>1?'es':'')+'\nTotal: '+fmt(total)+'\n\nCliente: '+cn+'\nTelefono: '+st.contact.tel+'\nEmail: '+st.contact.email+'\nEntrega: '+(st.del==='retiro'?'Retiro en local':'Envio a domicilio')+(st.del==='envio'?'\nDireccion: '+dir:'')+'\nFotos en Drive: '+(driveUrl||'Ver email')+(st.notes?'\nAclaraciones: '+st.notes:'');
+  var wa='Nuevo pedido ATICO\nN '+st.onum+'\n\nProducto: '+st.prod.n+'\nCategoria: '+cat.n+(st.prod.d?'\nDetalle: '+st.prod.d:'')+'\nCantidad: '+st.qty+' unidad'+(st.qty>1?'es':'')+'\nTotal: '+fmt(total)+'\n\nCliente: '+cn+'\nTelefono: '+st.contact.tel+'\nEmail: '+st.contact.email+'\nEntrega: '+(st.del==='retiro'?'Retiro en local':'Envio a domicilio')+(st.del==='envio'?'\nDireccion: '+dir:'')+'\nFotos en Drive: '+(driveUrl||'Ver email')+(st.notes?'\nAclaraciones: '+st.notes:'');
   var waLink='https://wa.me/5492324633454?text='+encodeURIComponent(wa);
   document.getElementById('whatsapp-final-link').href=waLink;
   goStep('success');
