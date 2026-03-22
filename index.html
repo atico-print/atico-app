@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ÁTICO | Diseño + Fotos</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue: #3D3BF3; --blue-dark: #2a29c4; --blue-light: #eeeffe;
+    --fuchsia: #FF2D9B; --fuchsia-light: #fff0f8;
+    --white: #ffffff; --gray: #f5f5f7; --gray2: #e8e8ed;
+    --text: #111; --text2: #555; --text3: #999;
+    --radius: 16px; --radius-sm: 10px;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--text); min-height: 100vh; }
+  header { background: var(--white); border-bottom: 1.5px solid var(--gray2); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 64px; position: sticky; top: 0; z-index: 100; }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 6px; color: var(--blue); }
+  .logo span { color: var(--fuchsia); }
+  .stepper { display: flex; align-items: center; padding: 16px 24px; background: var(--white); border-bottom: 1px solid var(--gray2); overflow-x: auto; }
+  .step { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+  .step-num { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--gray2); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: var(--text3); flex-shrink: 0; transition: all .2s; }
+  .step-label { font-size: 13px; color: var(--text3); font-weight: 400; transition: all .2s; }
+  .step.active .step-num { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .step.active .step-label { color: var(--blue); font-weight: 500; }
+  .step.done .step-num { background: var(--fuchsia); border-color: var(--fuchsia); color: #fff; }
+  .step.done .step-label { color: var(--text2); }
+  .step-line { width: 28px; height: 2px; background: var(--gray2); flex-shrink: 0; margin: 0 4px; }
+  .step-line.done { background: var(--fuchsia); }
+  main { max-width: 760px; margin: 0 auto; padding: 28px 24px 80px; }
+  .screen { display: none; animation: fadeIn .25s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 34px; letter-spacing: 3px; color: var(--blue); margin-bottom: 4px; }
+  h2 { font-size: 12px; font-weight: 400; color: var(--text3); margin-bottom: 24px; letter-spacing: .5px; text-transform: uppercase; }
+
+  /* CATEGORY TABS */
+  .cat-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .cat-tab { padding: 8px 16px; border: 1.5px solid var(--gray2); border-radius: 100px; font-size: 13px; cursor: pointer; transition: all .15s; color: var(--text2); background: var(--white); white-space: nowrap; }
+  .cat-tab:hover { border-color: var(--blue); color: var(--blue); }
+  .cat-tab.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+  /* PRODUCT LIST */
+  .product-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+  .product-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; border: 1.5px solid var(--gray2); border-radius: var(--radius-sm);
+    cursor: pointer; transition: all .15s; background: var(--white); gap: 12px;
+  }
+  .product-row:hover { border-color: var(--blue); }
+  .product-row.selected { border-color: var(--blue); background: var(--blue-light); }
+  .product-row-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+  .product-row-icon { font-size: 22px; flex-shrink: 0; }
+  .product-row-info { min-width: 0; }
+  .product-row-name { font-size: 14px; font-weight: 500; color: var(--text); }
+  .product-row-desc { font-size: 12px; color: var(--text3); margin-top: 1px; }
+  .product-row-price { font-size: 15px; font-weight: 500; color: var(--fuchsia); flex-shrink: 0; }
+  .product-row-check { width: 22px; height: 22px; border-radius: 50%; background: var(--blue); color: #fff; display: none; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+  .product-row.selected .product-row-check { display: flex; }
+
+  /* QTY */
+  .qty-section { display: none; margin-bottom: 24px; }
+  .qty-section.visible { display: block; }
+  .qty-label { font-size: 13px; font-weight: 500; color: var(--text2); margin-bottom: 10px; }
+  .qty-row { display: flex; align-items: center; gap: 12px; }
+  .qty-btn { width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--gray2); background: var(--white); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text); transition: all .15s; }
+  .qty-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .qty-num { font-size: 18px; font-weight: 500; min-width: 28px; text-align: center; }
+
+  /* PRICE BANNER */
+  .price-banner { background: var(--blue-light); border: 1.5px solid var(--blue); border-radius: var(--radius-sm); padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .price-banner-label { font-size: 13px; color: var(--text2); }
+  .price-banner-amount { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--blue); letter-spacing: 2px; }
+
+  /* DRIVE */
+  .drive-instructions { background: var(--blue-light); border: 1.5px solid var(--blue); border-radius: var(--radius-sm); padding: 16px 18px; margin-bottom: 20px; font-size: 13px; color: var(--text2); line-height: 1.8; }
+  .drive-instructions-title { font-weight: 500; color: var(--blue); margin-bottom: 6px; font-size: 14px; }
+
+  /* FORM */
+  .notes-area { width: 100%; border: 1.5px solid var(--gray2); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 14px; font-family: 'DM Sans', sans-serif; color: var(--text); resize: vertical; min-height: 80px; outline: none; transition: border .15s; margin-bottom: 28px; }
+  .notes-area:focus { border-color: var(--blue); }
+  .form-group { margin-bottom: 18px; }
+  .form-label { font-size: 12px; font-weight: 500; color: var(--text2); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; display: block; }
+  .form-input { width: 100%; border: 1.5px solid var(--gray2); border-radius: var(--radius-sm); padding: 11px 14px; font-size: 14px; font-family: 'DM Sans', sans-serif; color: var(--text); outline: none; transition: border .15s; }
+  .form-input:focus { border-color: var(--blue); }
+  .form-hint { font-size: 11px; color: var(--text3); margin-top: 5px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .delivery-toggle { display: flex; gap: 10px; margin-bottom: 18px; }
+  .toggle-btn { flex: 1; padding: 12px; border: 1.5px solid var(--gray2); border-radius: var(--radius-sm); background: var(--white); cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text2); transition: all .15s; font-family: 'DM Sans', sans-serif; }
+  .toggle-btn.selected { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
+  .address-fields { display: none; }
+  .address-fields.visible { display: block; }
+
+  /* SUMMARY */
+  .summary-card { border: 2px solid var(--blue); border-radius: var(--radius); overflow: hidden; margin-bottom: 24px; }
+  .summary-header { background: var(--blue); padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; }
+  .summary-header-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 3px; color: #fff; }
+  .summary-header-num { font-size: 12px; color: rgba(255,255,255,.7); }
+  .summary-body { padding: 18px 22px; }
+  .summary-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--gray2); font-size: 14px; gap: 12px; }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row-label { color: var(--text2); flex-shrink: 0; }
+  .summary-row-value { font-weight: 500; color: var(--text); text-align: right; word-break: break-all; }
+  .summary-total { display: flex; justify-content: space-between; align-items: center; padding: 14px 22px; background: var(--blue-light); border-top: 2px solid var(--blue); }
+  .summary-total-label { font-size: 14px; font-weight: 500; color: var(--blue); }
+  .summary-total-amount { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--blue); letter-spacing: 2px; }
+
+  /* PAYMENT */
+  .payment-box { border: 2px solid var(--fuchsia); border-radius: var(--radius); padding: 22px; text-align: center; margin-bottom: 24px; background: var(--fuchsia-light); }
+  .payment-box-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--fuchsia); font-weight: 500; margin-bottom: 8px; }
+  .payment-alias { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 4px; color: var(--fuchsia); margin-bottom: 8px; }
+  .payment-copy-btn { background: var(--fuchsia); color: #fff; border: none; border-radius: 100px; padding: 8px 20px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .15s; }
+  .payment-copy-btn:hover { background: #d4007e; }
+  .payment-note { font-size: 12px; color: var(--text3); margin-top: 8px; }
+
+  /* SUCCESS */
+  .success-screen { text-align: center; padding: 40px 0; }
+  .success-icon { font-size: 56px; margin-bottom: 16px; }
+  .success-title { font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 4px; color: var(--blue); margin-bottom: 8px; }
+  .success-sub { font-size: 15px; color: var(--text2); line-height: 1.6; max-width: 420px; margin: 0 auto 32px; }
+
+  /* BUTTONS */
+  .btn-primary { background: var(--blue); color: #fff; border: none; border-radius: 100px; padding: 14px 32px; font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .15s; width: 100%; display: block; text-align: center; }
+  .btn-primary:hover { background: var(--blue-dark); }
+  .btn-primary:disabled { background: var(--gray2); color: var(--text3); cursor: not-allowed; }
+  .btn-secondary { background: transparent; color: var(--text2); border: 1.5px solid var(--gray2); border-radius: 100px; padding: 12px 28px; font-size: 14px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .15s; }
+  .btn-secondary:hover { border-color: var(--blue); color: var(--blue); }
+  .btn-row { display: flex; gap: 12px; margin-top: 8px; }
+  .btn-row .btn-secondary { flex: 0 0 auto; }
+  .btn-row .btn-primary { flex: 1; }
+
+  /* LOADER */
+  .loader-overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,.92); z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+  .loader-overlay.visible { display: flex; }
+  .loader-spinner { width: 40px; height: 40px; border: 3px solid var(--gray2); border-top-color: var(--blue); border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loader-text { font-size: 14px; color: var(--text2); }
+</style>
+</head>
+<body>
+
+<div class="loader-overlay" id="loader">
+  <div class="loader-spinner"></div>
+  <div class="loader-text" id="loader-text">Enviando pedido...</div>
+</div>
+
+<header>
+  <div class="logo">A T I C O <span>.</span></div>
+  <div style="font-size:12px;color:var(--text3)">Diseño + Fotos</div>
+</header>
+
+<div class="stepper" id="stepper">
+  <div class="step active" data-step="1"><div class="step-num">1</div><div class="step-label">Producto</div></div>
+  <div class="step-line" id="line-1"></div>
+  <div class="step" data-step="2"><div class="step-num">2</div><div class="step-label">Fotos</div></div>
+  <div class="step-line" id="line-2"></div>
+  <div class="step" data-step="3"><div class="step-num">3</div><div class="step-label">Contacto</div></div>
+  <div class="step-line" id="line-3"></div>
+  <div class="step" data-step="4"><div class="step-num">4</div><div class="step-label">Resumen</div></div>
+</div>
+
+<main>
+
+  <!-- STEP 1: PRODUCTO -->
+  <div class="screen active" id="screen-1">
+    <h1>Elegí tu producto</h1>
+    <h2>Seleccioná una categoría y luego el producto</h2>
+
+    <div class="cat-tabs" id="cat-tabs"></div>
+    <div class="product-list" id="product-list"></div>
+
+    <div class="qty-section" id="qty-section">
+      <div class="qty-label">Cantidad</div>
+      <div class="qty-row">
+        <button class="qty-btn" id="qty-minus">−</button>
+        <div class="qty-num" id="qty-display">1</div>
+        <button class="qty-btn" id="qty-plus">+</button>
+      </div>
+    </div>
+
+    <div class="price-banner" id="price-banner" style="display:none">
+      <div>
+        <div class="price-banner-label">Total estimado</div>
+        <div style="font-size:11px;color:var(--text3)">podés cambiar la cantidad</div>
+      </div>
+      <div class="price-banner-amount" id="price-display">$0</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" id="btn-step1" disabled>Continuar →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: FOTOS -->
+  <div class="screen" id="screen-2">
+    <h1>Tus fotos</h1>
+    <h2>Compartí las imágenes para tu pedido</h2>
+
+    <div class="drive-instructions">
+      <div class="drive-instructions-title">📂 ¿Cómo compartir tus fotos?</div>
+      1. Subí tus fotos a <strong>Google Drive</strong><br>
+      2. Seleccioná la carpeta → clic derecho → <strong>"Compartir"</strong><br>
+      3. Cambiá el acceso a <strong>"Cualquier persona con el enlace"</strong><br>
+      4. Copiá el link y pegalo abajo
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Link de Google Drive *</label>
+      <input class="form-input" id="drive-link" type="url" placeholder="https://drive.google.com/drive/folders/...">
+      <div class="form-hint">Asegurate de que el link sea accesible para cualquier persona con el enlace</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Aclaraciones o instrucciones (opcional)</label>
+      <textarea class="notes-area" id="notes" placeholder="Ej: fotos en orden cronológico, imprimir sin bordes, colores específicos..."></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="goStep(1)">← Volver</button>
+      <button class="btn-primary" onclick="validateStep2()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: CONTACTO -->
+  <div class="screen" id="screen-3">
+    <h1>Tus datos</h1>
+    <h2>Para coordinar tu pedido</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Nombre *</label>
+        <input class="form-input" id="f-nombre" type="text" placeholder="Tu nombre">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Apellido *</label>
+        <input class="form-input" id="f-apellido" type="text" placeholder="Tu apellido">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">WhatsApp / Teléfono *</label>
+      <input class="form-input" id="f-tel" type="tel" placeholder="Ej: 2324 123456">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email *</label>
+      <input class="form-input" id="f-email" type="email" placeholder="tu@email.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">¿Cómo recibís el pedido?</label>
+      <div class="delivery-toggle">
+        <button class="toggle-btn selected" id="btn-retiro" onclick="setDelivery('retiro')">🏪 Retiro en local</button>
+        <button class="toggle-btn" id="btn-envio" onclick="setDelivery('envio')">📦 Envío a domicilio</button>
+      </div>
+    </div>
+    <div class="address-fields" id="address-fields">
+      <div class="form-group">
+        <label class="form-label">Calle y número *</label>
+        <input class="form-input" id="f-calle" type="text" placeholder="Ej: San Martín 123">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Ciudad *</label>
+          <input class="form-input" id="f-ciudad" type="text" placeholder="Ej: Mercedes">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Provincia *</label>
+          <input class="form-input" id="f-provincia" type="text" placeholder="Ej: Buenos Aires">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Código Postal</label>
+        <input class="form-input" id="f-cp" type="text" placeholder="Ej: 6600">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="goStep(2)">← Volver</button>
+      <button class="btn-primary" onclick="validateStep3()">Ver resumen →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: RESUMEN -->
+  <div class="screen" id="screen-4">
+    <h1>Resumen del pedido</h1>
+    <h2>Revisá y confirmá</h2>
+    <div class="summary-card">
+      <div class="summary-header">
+        <div class="summary-header-title">Tu pedido</div>
+        <div class="summary-header-num" id="order-num"></div>
+      </div>
+      <div class="summary-body" id="summary-body"></div>
+      <div class="summary-total">
+        <div class="summary-total-label">Total a pagar</div>
+        <div class="summary-total-amount" id="summary-total-price"></div>
+      </div>
+    </div>
+    <div class="payment-box">
+      <div class="payment-box-label">Pagá por Mercado Pago</div>
+      <div class="payment-alias">somos.atico</div>
+      <button class="payment-copy-btn" onclick="copyAlias()">Copiar alias</button>
+      <div class="payment-note">Enviá el comprobante por WhatsApp al finalizar</div>
+    </div>
+    <div style="background:var(--gray);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:24px;font-size:13px;color:var(--text2);line-height:1.8;">
+      📍 <strong>Local:</strong> 37 N 685, Mercedes, Buenos Aires<br>
+      📱 <strong>WhatsApp:</strong> <a href="https://wa.me/5492324633454" style="color:var(--blue)">+54 9 2324 633454</a><br>
+      📧 <strong>Email:</strong> aticomercedes@gmail.com
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="goStep(3)">← Volver</button>
+      <button class="btn-primary" id="btn-confirm" onclick="confirmOrder()">Confirmar y enviar pedido ✓</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="screen" id="screen-success">
+    <div class="success-screen">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">¡Pedido enviado!</div>
+      <div class="success-sub">Recibimos todos los datos por email. Ahora mandanos el resumen por WhatsApp para coordinar el pago y la entrega.</div>
+      <div class="payment-box" style="max-width:340px;margin:0 auto 28px;">
+        <div class="payment-box-label">Alias Mercado Pago</div>
+        <div class="payment-alias">somos.atico</div>
+        <button class="payment-copy-btn" onclick="copyAlias()">Copiar alias</button>
+        <div class="payment-note">Enviá el comprobante por WhatsApp</div>
+      </div>
+      <a href="#" id="whatsapp-final-link" target="_blank" style="text-decoration:none;display:block;max-width:320px;margin:0 auto;">
+        <button class="btn-primary" style="background:var(--fuchsia)">Enviar resumen por WhatsApp 💬</button>
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<script>
+emailjs.init('eTfGX4pLzh_1EMPpq');
+
+const CATALOG = [
+  {
+    cat: 'Fotos Comunes', icon: '🖼️', qty: false,
+    products: [
+      { name: 'Foto Mini Polaroid 18 Unidades', desc: 'Papel Común', price: 11500 },
+      { name: 'Foto Polaroid 15 Unidades', desc: 'Papel Común', price: 11500 },
+      { name: 'Foto 10x15', desc: 'Papel Común', price: 1540 },
+      { name: 'Foto 13x18', desc: 'Papel Común', price: 2200 },
+      { name: 'Foto 15x21', desc: 'Papel Común', price: 3700 },
+      { name: 'Foto 20x30', desc: 'Papel Común', price: 5300 },
+      { name: 'Foto 30x42', desc: 'Papel Común', price: 7700 },
+      { name: 'Foto 33x48', desc: 'Papel Común', price: 9400 },
+      { name: 'Foto 10x15 Pack x10', desc: 'Papel Común', price: 12200 },
+      { name: 'Foto 10x15 Pack x20', desc: 'Papel Común', price: 18000 },
+      { name: 'Foto 10x15 Pack x50', desc: 'Papel Común', price: 29000 },
+      { name: 'Foto 13x18 Pack x10', desc: 'Papel Común', price: 19000 },
+      { name: 'Foto 13x18 Pack x20', desc: 'Papel Común', price: 32000 },
+      { name: 'Foto 13x18 Pack x50', desc: 'Papel Común', price: 61000 },
+    ]
+  },
+  {
+    cat: 'Fotos Premium', icon: '✨', qty: false,
+    products: [
+      { name: 'Foto Mini Polaroid 18 Unidades', desc: 'Papel Premium', price: 17000 },
+      { name: 'Foto Polaroid 15 Unidades', desc: 'Papel Premium', price: 17000 },
+      { name: 'Foto 10x15', desc: 'Papel Premium', price: 2600 },
+      { name: 'Foto 13x18', desc: 'Papel Premium', price: 2900 },
+      { name: 'Foto 15x21', desc: 'Papel Premium', price: 5100 },
+      { name: 'Foto 20x30', desc: 'Papel Premium', price: 7200 },
+      { name: 'Foto 30x42', desc: 'Papel Premium', price: 12800 },
+      { name: 'Foto 33x48', desc: 'Papel Premium', price: 16000 },
+      { name: 'Foto 10x15 Pack x10', desc: 'Papel Premium', price: 17000 },
+      { name: 'Foto 10x15 Pack x20', desc: 'Papel Premium', price: 27000 },
+      { name: 'Foto 10x15 Pack x50', desc: 'Papel Premium', price: 51000 },
+      { name: 'Foto 13x18 Pack x10', desc: 'Papel Premium', price: 26000 },
+      { name: 'Foto 13x18 Pack x20', desc: 'Papel Premium', price: 45000 },
+      { name: 'Foto 13x18 Pack x50', desc: 'Papel Premium', price: 87000 },
+    ]
+  },
+  {
+    cat: 'Fotolibros', icon: '📖', qty: false,
+    products: [
+      { name: 'Fotolibro Mini 10x15', desc: '25 Fotos', price: 42000 },
+      { name: 'Fotolibro Clásico 15x21', desc: '50 Fotos — 35 Hojas', price: 67000 },
+      { name: 'Fotolibro Premium 20x30', desc: '80 Fotos — 35 Hojas', price: 100000 },
+      { name: 'Pola Book 15x21', desc: '15 Polaroids — 25 Hojas', price: 62000 },
+      { name: 'Pola Book 20x30', desc: '15 Polaroids — 35 Hojas', price: 91000 },
+    ]
+  },
+  {
+    cat: 'Productos', icon: '🎁', qty: false,
+    products: [
+      { name: 'Barra x1', desc: 'Tamaño de la Foto: 10x8cm', price: 27000 },
+      { name: 'Barra x2', desc: 'Tamaño de la Foto: 10x8cm', price: 34000 },
+      { name: 'Barra x3', desc: 'Tamaño de la Foto: 10x8cm', price: 41000 },
+      { name: 'Barra 20x20', desc: 'Tamaño de la Foto: 20x20cm', price: 46000 },
+      { name: 'Barra Calendario', desc: 'Tamaño de la Foto: 10x8cm', price: 58000 },
+      { name: 'Calendario Imán', desc: 'Tamaño de la Foto: 9x7cm', price: 46000 },
+      { name: 'Polaroids para Colgar', desc: '30 fotos con hilo y broches', price: 38000 },
+      { name: 'Polaroids para Colgar Led', desc: '30 fotos con alambre led y broches', price: 41000 },
+      { name: 'Polaroids Imán Premium', desc: 'Tamaño de la Foto: 10x8cm', price: 3600 },
+      { name: 'Rompecabezas Imán', desc: 'Tamaño de la Foto: 15x21cm', price: 28000 },
+      { name: 'Memo Test', desc: '24 Piezas — Tamaño de la Foto: 7x7cm', price: 31000 },
+      { name: 'Tiras de Fotos', desc: '5 tiras de fotos — 4 fotos cada una', price: 4000 },
+      { name: 'Poster Disney Pixar', desc: 'Tamaño de la Foto: 15x21 con barra de Madera', price: 48000 },
+      { name: 'Álbum de Figuritas', desc: '30 Figuritas — Tamaño: 20x30cm', price: 45000 },
+      { name: 'Álbum de Figuritas San Valentín', desc: '30 Figuritas — Tamaño: 20x30cm', price: 27000 },
+      { name: 'Tatoo', desc: 'Tamaño A4', price: 33000 },
+      { name: 'Cartas UNO', desc: '', price: 38000 },
+      { name: 'Polaroids con Sobre Estuche', desc: '15 fotos', price: 25000 },
+      { name: 'Accesorios Scrapbooking', desc: '', price: 8500 },
+    ]
+  },
+];
+
+let state = { catIndex:0, product:null, qty:1, driveLink:'', notes:'', delivery:'retiro', contact:{}, orderNum:'' };
+
+const fmt = n => '$' + n.toLocaleString('es-AR');
+
+// BUILD CATEGORY TABS
+const tabsEl = document.getElementById('cat-tabs');
+CATALOG.forEach((cat, i) => {
+  const tab = document.createElement('button');
+  tab.className = 'cat-tab' + (i===0?' active':'');
+  tab.textContent = cat.icon + ' ' + cat.cat;
+  tab.addEventListener('click', () => selectCat(i));
+  tabsEl.appendChild(tab);
+});
+
+function selectCat(i) {
+  state.catIndex = i;
+  state.product = null;
+  document.querySelectorAll('.cat-tab').forEach((t,idx) => t.classList.toggle('active', idx===i));
+  renderProducts();
+  document.getElementById('qty-section').classList.remove('visible');
+  document.getElementById('price-banner').style.display = 'none';
+  document.getElementById('btn-step1').disabled = true;
+}
+
+function renderProducts() {
+  const list = document.getElementById('product-list');
+  list.innerHTML = '';
+  const cat = CATALOG[state.catIndex];
+  cat.products.forEach((p, i) => {
+    const row = document.createElement('div');
+    row.className = 'product-row';
+    row.dataset.idx = i;
+    row.innerHTML = `
+      <div class="product-row-left">
+        <div class="product-row-icon">${cat.icon}</div>
+        <div class="product-row-info">
+          <div class="product-row-name">${p.name}</div>
+          ${p.desc ? `<div class="product-row-desc">${p.desc}</div>` : ''}
+        </div>
+      </div>
+      <div class="product-row-price">${fmt(p.price)}</div>
+      <div class="product-row-check">✓</div>
+    `;
+    row.addEventListener('click', () => selectProduct(i, row));
+    list.appendChild(row);
+  });
+}
+
+function selectProduct(idx, row) {
+  state.product = CATALOG[state.catIndex].products[idx];
+  state.qty = 1;
+  document.getElementById('qty-display').textContent = '1';
+  document.querySelectorAll('.product-row').forEach(r => r.classList.remove('selected'));
+  row.classList.add('selected');
+  document.getElementById('price-display').textContent = fmt(state.product.price);
+  document.getElementById('price-banner').style.display = 'flex';
+  document.getElementById('qty-section').classList.add('visible');
+  document.getElementById('btn-step1').disabled = false;
+}
+
+document.getElementById('qty-minus').addEventListener('click', () => {
+  if(state.qty>1){ state.qty--; document.getElementById('qty-display').textContent=state.qty; document.getElementById('price-display').textContent=fmt(state.product.price*state.qty); }
+});
+document.getElementById('qty-plus').addEventListener('click', () => {
+  state.qty++; document.getElementById('qty-display').textContent=state.qty; document.getElementById('price-display').textContent=fmt(state.product.price*state.qty);
+});
+document.getElementById('btn-step1').addEventListener('click', () => goStep(2));
+
+// Init first category
+renderProducts();
+
+function validateStep2() {
+  const link = document.getElementById('drive-link').value.trim();
+  if(!link){ alert('Por favor pegá el link de Google Drive con tus fotos.'); return; }
+  if(!link.includes('drive.google.com') && !link.includes('docs.google.com')){
+    alert('El link no parece ser de Google Drive. Verificá que sea correcto.'); return;
+  }
+  state.driveLink = link;
+  state.notes = document.getElementById('notes').value;
+  goStep(3);
+}
+
+function setDelivery(type) {
+  state.delivery = type;
+  document.getElementById('btn-retiro').classList.toggle('selected', type==='retiro');
+  document.getElementById('btn-envio').classList.toggle('selected', type==='envio');
+  document.getElementById('address-fields').classList.toggle('visible', type==='envio');
+}
+
+function validateStep3() {
+  const nombre=document.getElementById('f-nombre').value.trim();
+  const apellido=document.getElementById('f-apellido').value.trim();
+  const tel=document.getElementById('f-tel').value.trim();
+  const email=document.getElementById('f-email').value.trim();
+  if(!nombre||!apellido||!tel||!email){ alert('Por favor completá todos los campos obligatorios.'); return; }
+  if(!/\S+@\S+\.\S+/.test(email)){ alert('El email no es válido.'); return; }
+  if(state.delivery==='envio'){
+    const calle=document.getElementById('f-calle').value.trim();
+    const ciudad=document.getElementById('f-ciudad').value.trim();
+    const prov=document.getElementById('f-provincia').value.trim();
+    if(!calle||!ciudad||!prov){ alert('Completá los datos de envío.'); return; }
+    state.contact.calle=calle; state.contact.ciudad=ciudad; state.contact.provincia=prov;
+    state.contact.cp=document.getElementById('f-cp').value.trim();
+  }
+  state.contact.nombre=nombre; state.contact.apellido=apellido; state.contact.tel=tel; state.contact.email=email;
+  buildSummary(); goStep(4);
+}
+
+function buildSummary() {
+  state.orderNum = 'AT-'+Date.now().toString().slice(-6);
+  document.getElementById('order-num').textContent = state.orderNum;
+  const total = state.product.price * state.qty;
+  const cat = CATALOG[state.catIndex];
+  const direccion = state.delivery==='envio'
+    ? `${state.contact.calle}, ${state.contact.ciudad}, ${state.contact.provincia} ${state.contact.cp}`
+    : 'Retiro en local — 37 N 685, Mercedes';
+  const rows = [
+    ['Categoría', cat.cat],
+    ['Producto', state.product.name],
+    ['Detalle', state.product.desc || '—'],
+    ['Cantidad', state.qty + ' unidad' + (state.qty>1?'es':'')],
+    ['Precio unitario', fmt(state.product.price)],
+    ['Fotos', '🔗 Link de Drive adjunto'],
+    ['Entrega', state.delivery==='retiro'?'Retiro en local':'Envío a domicilio'],
+  ];
+  if(state.delivery==='envio') rows.push(['Dirección', direccion]);
+  rows.push(['Cliente', `${state.contact.nombre} ${state.contact.apellido}`]);
+  rows.push(['WhatsApp', state.contact.tel]);
+  rows.push(['Email', state.contact.email]);
+  if(state.notes) rows.push(['Aclaraciones', state.notes]);
+  document.getElementById('summary-body').innerHTML = rows.map(([l,v]) =>
+    `<div class="summary-row"><span class="summary-row-label">${l}</span><span class="summary-row-value">${v}</span></div>`
+  ).join('');
+  document.getElementById('summary-total-price').textContent = fmt(total);
+}
+
+function copyAlias() {
+  navigator.clipboard.writeText('somos.atico')
+    .then(()=>alert('✓ Alias copiado: somos.atico'))
+    .catch(()=>prompt('Copiá el alias:','somos.atico'));
+}
+
+async function confirmOrder() {
+  const btn = document.getElementById('btn-confirm');
+  btn.disabled = true;
+  showLoader('Enviando pedido al email...');
+
+  const cat = CATALOG[state.catIndex];
+  const total = state.product.price * state.qty;
+  const direccion = state.delivery==='envio'
+    ? `${state.contact.calle}, ${state.contact.ciudad}, ${state.contact.provincia} ${state.contact.cp}`
+    : 'Retiro en local — 37 N 685, Mercedes';
+
+  const params = {
+    order_num: state.orderNum,
+    producto: `[${cat.cat}] ${state.product.name}`,
+    variante: state.product.desc || '—',
+    cantidad: state.qty + ' unidad' + (state.qty>1?'es':''),
+    total: fmt(total),
+    nombre: state.contact.nombre+' '+state.contact.apellido,
+    telefono: state.contact.tel,
+    email_cliente: state.contact.email,
+    entrega: state.delivery==='retiro'?'Retiro en local':'Envío a domicilio',
+    direccion: direccion,
+    archivos: state.driveLink,
+    aclaraciones: state.notes || 'Sin aclaraciones',
+  };
+
+  let emailOk = false;
+  try {
+    await emailjs.send('service_e31v73a', 'template_1qgb22g', params);
+    emailOk = true;
+  } catch(e) { console.error('EmailJS error:', e); }
+
+  hideLoader();
+
+  const waText =
+`🎉 *Nuevo pedido ÁTICO*
+Nº ${state.orderNum}
+
+📦 *Producto:* ${state.product.name}
+📋 *Categoría:* ${cat.cat}
+${state.product.desc ? `📐 *Detalle:* ${state.product.desc}\n` : ''}🔢 *Cantidad:* ${state.qty} unidad${state.qty>1?'es':''}
+💰 *Total:* ${fmt(total)}
+
+👤 *Cliente:* ${state.contact.nombre} ${state.contact.apellido}
+📱 *Teléfono:* ${state.contact.tel}
+📧 *Email:* ${state.contact.email}
+🚚 *Entrega:* ${state.delivery==='retiro'?'Retiro en local':'Envío a domicilio'}
+${state.delivery==='envio' ? `📍 *Dirección:* ${direccion}\n` : ''}📂 *Fotos:* ${state.driveLink}
+${state.notes ? `📝 *Aclaraciones:* ${state.notes}` : ''}
+
+_Pedido enviado desde la app de ÁTICO_`;
+
+  document.getElementById('whatsapp-final-link').href = `https://wa.me/5492324633454?text=${encodeURIComponent(waText)}`;
+
+  if(!emailOk) alert('⚠️ Hubo un problema al enviar el email. El resumen igual se enviará por WhatsApp.');
+
+  goStep('success');
+}
+
+function showLoader(text) { document.getElementById('loader-text').textContent=text; document.getElementById('loader').classList.add('visible'); }
+function hideLoader() { document.getElementById('loader').classList.remove('visible'); }
+
+function goStep(n) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  if(n==='success'){
+    document.getElementById('screen-success').classList.add('active');
+    document.getElementById('stepper').style.display='none';
+    window.scrollTo({top:0,behavior:'smooth'}); return;
+  }
+  document.getElementById('screen-'+n).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  document.querySelectorAll('.step').forEach(s=>{
+    const num=+s.dataset.step;
+    s.classList.remove('active','done');
+    if(num===n) s.classList.add('active');
+    if(num<n) s.classList.add('done');
+  });
+  for(let i=1;i<=3;i++){
+    const line=document.getElementById('line-'+i);
+    if(line) line.classList.toggle('done', i<n);
+  }
+}
+</script>
+</body>
+</html>
