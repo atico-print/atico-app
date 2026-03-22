@@ -115,6 +115,29 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
 .payment-copy-btn{background:var(--fuchsia);color:#fff;border:none;border-radius:100px;padding:8px 20px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
 .payment-copy-btn:hover{background:#d4007e}
 .payment-note{font-size:12px;color:var(--text3);margin-top:8px}
+.comprobante-zone{border:2px dashed var(--fuchsia);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer;position:relative;transition:all .15s;margin-top:16px;background:var(--fuchsia-light)}
+.comprobante-zone:hover{background:#ffe0f0}
+.comprobante-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.comprobante-zone p{font-size:13px;color:var(--fuchsia);font-weight:500}
+.comprobante-zone small{font-size:11px;color:var(--text3)}
+.comprobante-preview{margin-top:10px;display:flex;align-items:center;gap:10px;background:var(--white);border-radius:var(--radius-sm);padding:10px 12px;border:1px solid var(--fuchsia)}
+.comprobante-preview-name{flex:1;font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.comprobante-preview-remove{background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px}
+.comprobante-preview-remove:hover{color:var(--fuchsia)}
+.comprobante-box{border:2px solid var(--gray2);border-radius:var(--radius);padding:20px;margin-bottom:24px;background:var(--white)}
+.comprobante-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:6px}
+.comprobante-sub{font-size:12px;color:var(--text3);margin-bottom:14px;line-height:1.5}
+.comprobante-zone{border:2px dashed var(--gray2);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer;position:relative;transition:all .15s}
+.comprobante-zone:hover,.comprobante-zone.dragover{border-color:var(--fuchsia);background:var(--fuchsia-light)}
+.comprobante-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.comprobante-zone p{font-size:13px;color:var(--text3)}
+.comprobante-preview{margin-top:12px;display:none}
+.comprobante-preview.visible{display:block}
+.comprobante-preview img{width:100%;max-height:200px;object-fit:contain;border-radius:var(--radius-sm);border:1px solid var(--gray2)}
+.comprobante-file-name{font-size:12px;color:var(--text2);margin-top:6px;text-align:center}
+.comprobante-ok{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#e8f5e9;border-radius:var(--radius-sm);margin-top:10px}
+.comprobante-ok-icon{color:#2e7d32;font-size:16px}
+.comprobante-ok-text{font-size:13px;color:#2e7d32;font-weight:500}
 /* SUCCESS */
 .success-screen{text-align:center;padding:40px 0}
 .success-icon{font-size:56px;margin-bottom:16px}
@@ -265,16 +288,39 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
       <div class="payment-box-label">Paga por Mercado Pago</div>
       <div class="payment-alias">somos.atico</div>
       <button class="payment-copy-btn" onclick="copyAlias()">Copiar alias</button>
-      <div class="payment-note">Envia el comprobante por WhatsApp al finalizar</div>
+      <div class="payment-note">Transferi el total y luego subi el comprobante abajo</div>
+      <div class="comprobante-zone" id="comprobante-zone">
+        <input type="file" id="comprobante-input" accept="image/*,.pdf">
+        <p>&#128247; Subir comprobante de pago</p>
+        <small>JPG, PNG o PDF</small>
+      </div>
+      <div class="comprobante-preview" id="comprobante-preview" style="display:none">
+        <span style="font-size:20px">&#10003;</span>
+        <span class="comprobante-preview-name" id="comprobante-name"></span>
+        <button class="comprobante-preview-remove" onclick="removeComprobante()">&#10005;</button>
+      </div>
     </div>
     <div style="background:var(--gray);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:24px;font-size:13px;color:var(--text2);line-height:1.8;">
       Local: 37 N 685, Mercedes, Buenos Aires<br>
       WhatsApp: <a href="https://wa.me/5492324633454" style="color:var(--blue)">+54 9 2324 633454</a><br>
       Email: aticomercedes@gmail.com
     </div>
+    <div class="comprobante-box">
+      <div class="comprobante-title">Paso previo: realizar el pago</div>
+      <div class="comprobante-sub">Antes de confirmar el pedido realiza la transferencia por Mercado Pago al alias <strong>somos.atico</strong> y adjunta el comprobante aca abajo. Sin comprobante no se puede confirmar el pedido.</div>
+      <div class="comprobante-zone" id="comprobante-zone">
+        <input type="file" id="comprobante-input" accept="image/*,.pdf">
+        <p>&#128247; Toca para subir la captura del comprobante</p>
+      </div>
+      <div class="comprobante-preview" id="comprobante-preview">
+        <img id="comprobante-img" src="" alt="Comprobante">
+        <div class="comprobante-file-name" id="comprobante-name"></div>
+        <div class="comprobante-ok"><span class="comprobante-ok-icon">&#10003;</span><span class="comprobante-ok-text">Comprobante adjunto correctamente</span></div>
+      </div>
+    </div>
     <div class="btn-row">
       <button class="btn-secondary" onclick="goStep(3)">Volver</button>
-      <button class="btn-primary" id="btn-confirm" onclick="confirmOrder()">Confirmar y enviar pedido</button>
+      <button class="btn-primary" id="btn-confirm" onclick="confirmOrder()" disabled>Adjunta el comprobante para confirmar</button>
     </div>
   </div>
   <!-- SUCCESS -->
@@ -383,7 +429,7 @@ function loadCatalog(){
 }
 var C=loadCatalog();
 
-var st={ci:0,cart:[],notes:'',del:'retiro',contact:{},onum:''};
+var st={ci:0,cart:[],notes:'',del:'retiro',contact:{},onum:'',comprobante:null};
 function fmt(n){return '$'+n.toLocaleString('es-AR');}
 
 function cartTotal(){var t=0;for(var i=0;i<st.cart.length;i++)t+=st.cart[i].price*st.cart[i].qty;return t;}
@@ -544,10 +590,59 @@ function buildSummary(){
   document.getElementById('summary-total-price').textContent=fmt(cartTotal());
 }
 function copyAlias(){navigator.clipboard.writeText('somos.atico').then(function(){alert('Alias copiado: somos.atico');}).catch(function(){prompt('Copia el alias:','somos.atico');});}
+document.getElementById('comprobante-input').onchange=function(e){
+  if(e.target.files&&e.target.files[0]){
+    st.comprobante=e.target.files[0];
+    document.getElementById('comprobante-name').textContent=st.comprobante.name;
+    document.getElementById('comprobante-preview').style.display='flex';
+    document.getElementById('comprobante-zone').style.display='none';
+    document.getElementById('btn-confirm').disabled=true;
+  st.comprobante=null;
+  document.getElementById('comprobante-input').value='';
+  document.getElementById('comprobante-preview').style.display='none';
+  document.getElementById('comprobante-zone').style.display='block';
+  }
+};
+function removeComprobante(){
+  st.comprobante=null;
+  document.getElementById('comprobante-input').value='';
+  document.getElementById('comprobante-preview').style.display='none';
+  document.getElementById('comprobante-zone').style.display='block';
+  document.getElementById('btn-confirm').disabled=true;
+}
 function f2b64(file){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result.split(',')[1]);};r.onerror=rej;r.readAsDataURL(file);});}
 function showLdr(t,s,p){document.getElementById('loader-text').textContent=t||'';document.getElementById('loader-sub').textContent=s||'';document.getElementById('loader-progress-fill').style.width=(p||0)+'%';document.getElementById('loader').classList.add('visible');}
 function setLdr(t,s,p){document.getElementById('loader-text').textContent=t||'';document.getElementById('loader-sub').textContent=s||'';document.getElementById('loader-progress-fill').style.width=p+'%';}
 function hideLdr(){document.getElementById('loader').classList.remove('visible');}
+
+var comprobanteFile = null;
+document.getElementById('comprobante-input').onchange = function(e) {
+  if(e.target.files.length > 0) setComprobante(e.target.files[0]);
+};
+var cz = document.getElementById('comprobante-zone');
+cz.ondragover = function(e){e.preventDefault();cz.classList.add('dragover');};
+cz.ondragleave = function(){cz.classList.remove('dragover');};
+cz.ondrop = function(e){e.preventDefault();cz.classList.remove('dragover');if(e.dataTransfer.files.length>0)setComprobante(e.dataTransfer.files[0]);};
+
+function setComprobante(file) {
+  comprobanteFile = file;
+  var preview = document.getElementById('comprobante-preview');
+  var img = document.getElementById('comprobante-img');
+  var name = document.getElementById('comprobante-name');
+  name.textContent = file.name;
+  if(file.type.startsWith('image/')) {
+    var reader = new FileReader();
+    reader.onload = function(e){ img.src = e.target.result; };
+    reader.readAsDataURL(file);
+    img.style.display = 'block';
+  } else {
+    img.style.display = 'none';
+  }
+  preview.classList.add('visible');
+  var btn = document.getElementById('btn-confirm');
+  btn.disabled = false;
+  btn.textContent = 'Confirmar y enviar pedido';
+}
 
 async function confirmOrder(){
   document.getElementById('btn-confirm').disabled=true;
@@ -559,6 +654,17 @@ async function confirmOrder(){
   var totalFiles=0;
   for(var i=0;i<st.cart.length;i++)totalFiles+=st.cart[i].files.length;
   var filesDone=0;
+  // Upload comprobante first
+  var comprobanteUrl='';
+  if(st.comprobante){
+    setLdr('Subiendo comprobante de pago...','',8);
+    try{
+      var cb64=await f2b64(st.comprobante);
+      var cresp=await fetch(SURL,{method:'POST',body:JSON.stringify({clientName:cn,orderNum:st.onum,productName:'Comprobante de Pago',files:[{name:st.comprobante.name,mimeType:st.comprobante.type||'image/jpeg',data:cb64}]})});
+      var cres=await cresp.json();
+      if(cres.success)comprobanteUrl=cres.folderUrl;
+    }catch(e){console.error(e);}
+  }
   for(var ci=0;ci<st.cart.length;ci++){
     var item=st.cart[ci];
     var fd=[];
@@ -574,6 +680,14 @@ async function confirmOrder(){
       driveUrls.push({name:item.name,url:res.success?res.folderUrl:'Sin link'});
     }catch(e){driveUrls.push({name:item.name,url:'Error al subir'});}
   }
+  // Upload comprobante
+  if(comprobanteFile){
+    setLdr('Subiendo comprobante...','',78);
+    try{
+      var cb64=await f2b64(comprobanteFile);
+      await fetch(SURL,{method:'POST',body:JSON.stringify({clientName:cn,orderNum:st.onum,productName:'Comprobante de pago',files:[{name:comprobanteFile.name,mimeType:comprobanteFile.type||'image/jpeg',data:cb64}]})});
+    }catch(e){console.error(e);}
+  }
   setLdr('Enviando confirmacion por email...','',82);
   var prodsTxt='';
   for(var i=0;i<st.cart.length;i++)prodsTxt+=st.cart[i].name+' (x'+st.cart[i].qty+') - '+fmt(st.cart[i].price*st.cart[i].qty)+'\n';
@@ -585,7 +699,7 @@ async function confirmOrder(){
       cantidad:st.cart.length+' items',total:fmt(total),nombre:cn,
       telefono:st.contact.tel,email_cliente:st.contact.email,
       entrega:st.del==='retiro'?'Retiro en local':'Envio a domicilio',
-      direccion:dir,archivos:drivesTxt,aclaraciones:st.notes||'Sin aclaraciones'
+      direccion:dir,archivos:drivesTxt+(comprobanteUrl?'\nComprobante: '+comprobanteUrl:''),aclaraciones:st.notes||'Sin aclaraciones'
     });
   }catch(e){console.error(e);}
   setLdr('Listo!','',100);
@@ -608,6 +722,8 @@ async function confirmOrder(){
   wa+='\uD83D\uDE9A *Entrega:* '+(st.del==='retiro'?'Retiro en local':'Envio a domicilio')+'\n';
   if(st.del==='envio')wa+='\uD83D\uDCCD *Direccion:* '+dir+'\n';
   if(st.notes)wa+='\uD83D\uDCDD *Aclaraciones:* '+st.notes+'\n';
+  if(comprobanteUrl)wa+='\uD83D\uDCB3 *Comprobante:* '+comprobanteUrl+'\n';
+  else wa+='\uD83D\uDCB3 *Comprobante:* '+st.comprobante.name+'\n';
   var waLink='https://wa.me/5492324633454?text='+encodeURIComponent(wa);
   document.getElementById('whatsapp-final-link').href=waLink;
   goStep('success');
@@ -617,7 +733,12 @@ async function confirmOrder(){
 function resetApp(){
   st={ci:0,cart:[],notes:'',del:'retiro',contact:{},onum:''};
   ['notes','f-nombre','f-apellido','f-tel','f-email','f-calle','f-ciudad','f-provincia','f-cp'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('btn-confirm').disabled=false;
+  document.getElementById('btn-confirm').disabled=true;
+  document.getElementById('btn-confirm').textContent='Adjunta el comprobante para confirmar';
+  comprobanteFile=null;
+  document.getElementById('comprobante-input').value='';
+  document.getElementById('comprobante-preview').classList.remove('visible');
+  document.getElementById('comprobante-img').src='';
   document.getElementById('stepper').style.display='flex';
   document.getElementById('product-upload-groups').innerHTML='';
   setDelivery('retiro');
