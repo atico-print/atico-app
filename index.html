@@ -457,7 +457,7 @@ async function confirmOrder(){
   setLdr('Listo!','',100);
   await new Promise(function(r){setTimeout(r,500);});
   hideLdr();
-  var wa='Nuevo pedido ATICO\nN '+st.onum+'\n\nProducto: '+st.prod.n+'\nCategoria: '+cat.n+(st.prod.d?'\nDetalle: '+st.prod.d:'')+'\nCantidad: '+st.qty+' unidad'+(st.qty>1?'es':'')+'\nTotal: '+fmt(total)+'\n\nCliente: '+cn+'\nTelefono: '+st.contact.tel+'\nEmail: '+st.contact.email+'\nEntrega: '+(st.del==='retiro'?'Retiro en local':'Envio a domicilio')+(st.del==='envio'?'\nDireccion: '+dir:'')+'\nFotos en Drive: '+(driveUrl||'Ver email')+(st.notes?'\nAclaraciones: '+st.notes:'');
+  var wa='\uD83C\uDF89 *Nuevo pedido ATICO*\nN\u00B0 '+st.onum+'\n\n\uD83D\uDCE6 *Producto:* '+st.prod.n+'\n\uD83D\uDCCB *Categoria:* '+cat.n+(st.prod.d?'\n\uD83D\uDCD0 *Detalle:* '+st.prod.d:'')+'\n\uD83D\uDD22 *Cantidad:* '+st.qty+' unidad'+(st.qty>1?'es':'')+'\n\uD83D\uDCB0 *Total:* '+fmt(total)+'\n\n\uD83D\uDC64 *Cliente:* '+cn+'\n\uD83D\uDCF1 *Telefono:* '+st.contact.tel+'\n\uD83D\uDCE7 *Email:* '+st.contact.email+'\n\uD83D\uDE9A *Entrega:* '+(st.del==='retiro'?'Retiro en local':'Envio a domicilio')+(st.del==='envio'?'\n\uD83D\uDCCD *Direccion:* '+dir:'')+'\n\uD83D\uDCC2 *Fotos en Drive:* '+(driveUrl||'Ver email')+(st.notes?'\n\uD83D\uDCDD *Aclaraciones:* '+st.notes:'');
   var waLink='https://wa.me/5492324633454?text='+encodeURIComponent(wa);
   document.getElementById('whatsapp-final-link').href=waLink;
   goStep('success');
