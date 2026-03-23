@@ -289,16 +289,6 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
       <div class="payment-alias">somos.atico</div>
       <button class="payment-copy-btn" onclick="copyAlias()">Copiar alias</button>
       <div class="payment-note">Transferi el total y luego subi el comprobante abajo</div>
-      <div class="comprobante-zone" id="comprobante-zone">
-        <input type="file" id="comprobante-input" accept="image/*,.pdf">
-        <p>&#128247; Subir comprobante de pago</p>
-        <small>JPG, PNG o PDF</small>
-      </div>
-      <div class="comprobante-preview" id="comprobante-preview" style="display:none">
-        <span style="font-size:20px">&#10003;</span>
-        <span class="comprobante-preview-name" id="comprobante-name"></span>
-        <button class="comprobante-preview-remove" onclick="removeComprobante()">&#10005;</button>
-      </div>
     </div>
     <div style="background:var(--gray);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:24px;font-size:13px;color:var(--text2);line-height:1.8;">
       Local: 37 N 685, Mercedes, Buenos Aires<br>
@@ -348,7 +338,7 @@ var SURL='https://script.google.com/macros/s/AKfycbyQeVMe2ZUnjregMVqMGaoXZ_UPxgV
 var ADMIN_PASS='atico2024';
 
 var DEFAULT_CATALOG=[
-  {n:'Polaroids',ic:'&#128247;',p:[
+  {n:'Polaroids',ic:'🖼️',p:[
     {n:'Foto Mini Polaroid 18 Unidades',d:'Papel Standard',p:11500},
     {n:'Foto Polaroid 15 Unidades',d:'Papel Standard',p:11500},
     {n:'Foto Mini Polaroid 18 Unidades',d:'Papel Premium',p:17000},
@@ -358,7 +348,7 @@ var DEFAULT_CATALOG=[
     {n:'Polaroids Iman Premium',d:'Tamano de la Foto: 10x8cm',p:3600},
     {n:'Polaroids con Sobre Estuche',d:'15 fotos',p:25000}
   ]},
-  {n:'Foto Standard',ic:'&#128444;',p:[
+  {n:'Foto Standard',ic:'📷',p:[
     {n:'Foto 10x15',d:'Papel Standard',p:1540},
     {n:'Foto 13x18',d:'Papel Standard',p:2200},
     {n:'Foto 15x21',d:'Papel Standard',p:3700},
@@ -366,7 +356,7 @@ var DEFAULT_CATALOG=[
     {n:'Foto 30x42',d:'Papel Standard',p:7700},
     {n:'Foto 33x48',d:'Papel Standard',p:9400}
   ]},
-  {n:'Foto Premium',ic:'&#10024;',p:[
+  {n:'Foto Premium',ic:'📸',p:[
     {n:'Foto 10x15',d:'Papel Premium',p:2600},
     {n:'Foto 13x18',d:'Papel Premium',p:2900},
     {n:'Foto 15x21',d:'Papel Premium',p:5100},
@@ -374,7 +364,7 @@ var DEFAULT_CATALOG=[
     {n:'Foto 30x42',d:'Papel Premium',p:12800},
     {n:'Foto 33x48',d:'Papel Premium',p:16000}
   ]},
-  {n:'Pack Foto Standard',ic:'&#128230;',p:[
+  {n:'Pack Foto Standard',ic:'🔥',p:[
     {n:'Foto 10x15 Pack x10',d:'Papel Standard',p:12200},
     {n:'Foto 10x15 Pack x20',d:'Papel Standard',p:18000},
     {n:'Foto 10x15 Pack x50',d:'Papel Standard',p:29000},
@@ -382,7 +372,7 @@ var DEFAULT_CATALOG=[
     {n:'Foto 13x18 Pack x20',d:'Papel Standard',p:32000},
     {n:'Foto 13x18 Pack x50',d:'Papel Standard',p:61000}
   ]},
-  {n:'Pack Foto Premium',ic:'&#128081;',p:[
+  {n:'Pack Foto Premium',ic:'👑',p:[
     {n:'Foto 10x15 Pack x10',d:'Papel Premium',p:17000},
     {n:'Foto 10x15 Pack x20',d:'Papel Premium',p:27000},
     {n:'Foto 10x15 Pack x50',d:'Papel Premium',p:51000},
@@ -390,7 +380,7 @@ var DEFAULT_CATALOG=[
     {n:'Foto 13x18 Pack x20',d:'Papel Premium',p:45000},
     {n:'Foto 13x18 Pack x50',d:'Papel Premium',p:87000}
   ]},
-  {n:'Fotolibros',ic:'&#128214;',p:[
+  {n:'Fotolibros',ic:'📓',p:[
     {n:'Fotolibro Mini 10x15',d:'25 Fotos',p:42000},
     {n:'Fotolibro Clasico 15x21',d:'50 Fotos - 35 Hojas',p:67000},
     {n:'Fotolibro Premium 20x30',d:'80 Fotos - 35 Hojas',p:100000},
@@ -398,23 +388,27 @@ var DEFAULT_CATALOG=[
     {n:'Pola Book 20x30',d:'15 Polaroids - 35 Hojas',p:91000},
     {n:'Accesorios Scrapbooking',d:'',p:8500}
   ]},
-  {n:'Portaretratos',ic:'&#128188;',p:[
+  {n:'Portaretratos',ic:'🏠',p:[
     {n:'Barra de Madera x 1 Foto',d:'Tamano de la Foto: 10x8cm',p:27000},
     {n:'Barra de Madera x 2 Fotos',d:'Tamano de la Foto: 10x8cm',p:34000},
     {n:'Barra de Madera x 3 Fotos',d:'Tamano de la Foto: 10x8cm',p:41000},
     {n:'Barra de Madera x 1 Foto de 20x20',d:'Tamano de la Foto: 20x20cm',p:46000}
   ]},
-  {n:'Calendarios',ic:'&#128197;',p:[
+  {n:'Calendarios',ic:'📅',p:[
     {n:'Barra de Madera Calendario',d:'Tamano de la Foto: 10x8cm',p:58000},
     {n:'Calendario Iman',d:'Tamano de la Foto: 9x7cm',p:46000}
   ]},
-  {n:'Regalos',ic:'&#127873;',p:[
+  {n:'Personalizados',ic:'🎁',p:[
     {n:'Rompecabezas Iman',d:'Tamano de la Foto: 15x21cm',p:28000},
     {n:'Memo Test',d:'24 Piezas - Tamano de la Foto: 7x7cm',p:31000},
     {n:'Tiras de Fotos',d:'5 tiras - 4 fotos cada una',p:4000},
     {n:'Poster Disney Pixar',d:'Tamano de la Foto: 15x21 con barra de Madera',p:48000},
     {n:'Foto Tatoo',d:'Tamano A4',p:33000},
     {n:'Cartas UNO',d:'',p:38000}
+  ]},
+  {n:'Album de Figuritas',ic:'🎊',p:[
+    {n:'Album de Figuritas',d:'30 Figuritas - Tamano: 20x30cm',p:45000},
+    {n:'Album de Figuritas San Valentin',d:'30 Figuritas - Tamano: 20x30cm',p:27000}
   ]}
 ];
 
