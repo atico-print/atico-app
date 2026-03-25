@@ -642,58 +642,42 @@ async function confirmOrder(){
   var dir=st.del==='envio'?(st.contact.calle+', '+st.contact.ciudad+', '+st.contact.provincia+' '+st.contact.cp):'Retiro en local - 37 N 685, Mercedes';
   var total=cartTotal();
   showLdr('Preparando archivos...','',5);
-  var driveUrls=[];
-  var totalFiles=0;
-  for(var i=0;i<st.cart.length;i++)totalFiles+=st.cart[i].files.length;
-  var filesDone=0;
-  // Upload comprobante first
   var comprobanteUrl='';
-  if(st.comprobante){
-    setLdr('Subiendo comprobante de pago...','',8);
+  if(comprobanteFile){
+    setLdr('Subiendo comprobante...','',10);
     try{
-      var cb64=await f2b64(st.comprobante);
-      var cresp=await fetch(SURL,{method:'POST',body:JSON.stringify({clientName:cn,orderNum:st.onum,productName:'Comprobante de Pago',files:[{name:st.comprobante.name,mimeType:st.comprobante.type||'image/jpeg',data:cb64}]})});
+      var cb64=await f2b64(comprobanteFile);
+      var cresp=await fetch(SURL,{method:'POST',body:JSON.stringify({clientName:cn,orderNum:st.onum,productName:'Comprobante de Pago',files:[{name:comprobanteFile.name,mimeType:comprobanteFile.type||'image/jpeg',data:cb64}]})});
       var cres=await cresp.json();
       if(cres.success)comprobanteUrl=cres.folderUrl;
     }catch(e){console.error(e);}
   }
+  var driveUrls=[];
+  var totalFiles=0;
+  for(var i=0;i<st.cart.length;i++)totalFiles+=st.cart[i].files.length;
+  var filesDone=0;
   for(var ci=0;ci<st.cart.length;ci++){
     var item=st.cart[ci];
     var fd=[];
     for(var fi=0;fi<item.files.length;fi++){
       filesDone++;
-      setLdr('Preparando fotos...','Producto '+(ci+1)+' de '+st.cart.length+' - Archivo '+filesDone+' de '+totalFiles,Math.round(5+(filesDone/Math.max(totalFiles,1))*40));
+      setLdr('Preparando fotos...','Producto '+(ci+1)+' de '+st.cart.length,Math.round(15+(filesDone/Math.max(totalFiles,1))*40));
       fd.push({name:item.files[fi].name,mimeType:item.files[fi].type||'application/octet-stream',data:await f2b64(item.files[fi])});
     }
-    setLdr('Subiendo fotos a Drive...','Producto '+(ci+1)+': '+item.name,Math.round(45+(ci/st.cart.length)*35));
+    setLdr('Subiendo fotos a Drive...','Producto '+(ci+1)+': '+item.name,Math.round(55+(ci/st.cart.length)*20));
     try{
       var resp=await fetch(SURL,{method:'POST',body:JSON.stringify({clientName:cn,orderNum:st.onum,productName:item.name,files:fd})});
       var res=await resp.json();
       driveUrls.push({name:item.name,url:res.success?res.folderUrl:'Sin link'});
     }catch(e){driveUrls.push({name:item.name,url:'Error al subir'});}
   }
-  // Upload comprobante
-  if(comprobanteFile){
-    setLdr('Subiendo comprobante...','',78);
-    try{
-      var cb64=await f2b64(comprobanteFile);
-      await fetch(SURL,{method:'POST',body:JSON.stringify({clientName:cn,orderNum:st.onum,productName:'Comprobante de pago',files:[{name:comprobanteFile.name,mimeType:comprobanteFile.type||'image/jpeg',data:cb64}]})});
-    }catch(e){console.error(e);}
-  }
-  setLdr('Enviando confirmacion por email...','',82);
+  setLdr('Enviando confirmacion...','',80);
   var prodsTxt='';
   for(var i=0;i<st.cart.length;i++)prodsTxt+=st.cart[i].name+' (x'+st.cart[i].qty+') - '+fmt(st.cart[i].price*st.cart[i].qty)+'\n';
   var drivesTxt='';
   for(var i=0;i<driveUrls.length;i++)drivesTxt+=driveUrls[i].name+': '+driveUrls[i].url+'\n';
-  try{
-    await emailjs.send('service_e31v73a','template_1qgb22g',{
-      order_num:st.onum,producto:prodsTxt,variante:st.cart.length+' producto(s)',
-      cantidad:st.cart.length+' items',total:fmt(total),nombre:cn,
-      telefono:st.contact.tel,email_cliente:st.contact.email,
-      entrega:st.del==='retiro'?'Retiro en local':'Envio a domicilio',
-      direccion:dir,archivos:drivesTxt+(comprobanteUrl?'\nComprobante: '+comprobanteUrl:''),aclaraciones:st.notes||'Sin aclaraciones'
-    });
-  }catch(e){console.error(e);}
+  if(comprobanteUrl)drivesTxt+='Comprobante: '+comprobanteUrl;
+  try{await emailjs.send('service_e31v73a','template_1qgb22g',{order_num:st.onum,producto:prodsTxt,variante:st.cart.length+' producto(s)',cantidad:st.cart.length+' items',total:fmt(total),nombre:cn,telefono:st.contact.tel,email_cliente:st.contact.email,entrega:st.del==='retiro'?'Retiro en local':'Envio a domicilio',direccion:dir,archivos:drivesTxt,aclaraciones:st.notes||'Sin aclaraciones'});}catch(e){console.error(e);}
   setLdr('Listo!','',100);
   await new Promise(function(r){setTimeout(r,500);});
   hideLdr();
@@ -714,35 +698,17 @@ async function confirmOrder(){
   wa+='\uD83D\uDE9A *Entrega:* '+(st.del==='retiro'?'Retiro en local':'Envio a domicilio')+'\n';
   if(st.del==='envio')wa+='\uD83D\uDCCD *Direccion:* '+dir+'\n';
   if(st.notes)wa+='\uD83D\uDCDD *Aclaraciones:* '+st.notes+'\n';
-  if(comprobanteUrl)wa+='\uD83D\uDCB3 *Comprobante:* '+comprobanteUrl+'\n';
-  else wa+='\uD83D\uDCB3 *Comprobante:* '+st.comprobante.name+'\n';
+  wa+='\uD83D\uDCB3 *Comprobante:* '+(comprobanteUrl||(comprobanteFile?comprobanteFile.name:'adjunto'))+'\n';
   var waLink='https://wa.me/5492324633454?text='+encodeURIComponent(wa);
   document.getElementById('whatsapp-final-link').href=waLink;
-
-  // Build success order card
-  var cardHtml='<div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--gray2)">';
-  cardHtml+='<div style="font-family:Bebas Neue,sans-serif;font-size:18px;letter-spacing:2px;color:var(--blue)">N° '+st.onum+'</div>';
-  cardHtml+='</div>';
+  var cardHtml='<div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--gray2)"><div style="font-family:Bebas Neue,sans-serif;font-size:18px;letter-spacing:2px;color:var(--blue)">N\u00b0 '+st.onum+'</div></div>';
   for(var i=0;i<st.cart.length;i++){
     var it=st.cart[i];
-    cardHtml+='<div style="padding:8px 0;border-bottom:1px solid var(--gray)">';
-    cardHtml+='<div style="font-size:14px;font-weight:500;color:var(--text)">'+it.name+'</div>';
-    cardHtml+='<div style="font-size:12px;color:var(--text3)">'+it.cat+(it.desc?' - '+it.desc:'')+'</div>';
-    cardHtml+='<div style="font-size:13px;color:var(--fuchsia);font-weight:500;margin-top:2px">'+fmt(it.price*it.qty)+' (x'+it.qty+')</div>';
-    cardHtml+='</div>';
+    cardHtml+='<div style="padding:8px 0;border-bottom:1px solid var(--gray)"><div style="font-size:14px;font-weight:500;color:var(--text)">'+it.name+'</div><div style="font-size:12px;color:var(--text3)">'+it.cat+(it.desc?' - '+it.desc:'')+'</div><div style="font-size:13px;color:var(--fuchsia);font-weight:500;margin-top:2px">'+fmt(it.price*it.qty)+' (x'+it.qty+')</div></div>';
   }
-  cardHtml+='<div style="display:flex;justify-content:space-between;align-items:center;padding-top:12px;margin-top:4px">';
-  cardHtml+='<span style="font-size:14px;font-weight:500;color:var(--blue)">Total pagado</span>';
-  cardHtml+='<span style="font-family:Bebas Neue,sans-serif;font-size:26px;color:var(--blue);letter-spacing:2px">'+fmt(total)+'</span>';
-  cardHtml+='</div>';
-  cardHtml+='<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--gray2);font-size:12px;color:var(--text2);line-height:1.8">';
-  cardHtml+='<strong>'+cn+'</strong><br>';
-  cardHtml+=st.contact.tel+' | '+st.contact.email+'<br>';
-  cardHtml+=(st.del==='retiro'?'Retiro en local':'Envio a domicilio: '+dir);
-  if(st.notes)cardHtml+='<br><em>'+st.notes+'</em>';
-  cardHtml+='</div>';
+  cardHtml+='<div style="display:flex;justify-content:space-between;align-items:center;padding-top:12px;margin-top:4px"><span style="font-size:14px;font-weight:500;color:var(--blue)">Total pagado</span><span style="font-family:Bebas Neue,sans-serif;font-size:26px;color:var(--blue);letter-spacing:2px">'+fmt(total)+'</span></div>';
+  cardHtml+='<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--gray2);font-size:12px;color:var(--text2);line-height:1.8"><strong>'+cn+'</strong><br>'+st.contact.tel+' | '+st.contact.email+'<br>'+(st.del==='retiro'?'Retiro en local':'Envio a domicilio: '+dir)+(st.notes?'<br><em>'+st.notes+'</em>':'')+'</div>';
   document.getElementById('success-order-card').innerHTML=cardHtml;
-
   goStep('success');
   setTimeout(function(){window.open(waLink,'_blank');},800);
 }
