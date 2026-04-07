@@ -15,8 +15,7 @@ header{background:var(--white);border-bottom:1.5px solid var(--gray2);padding:0 
 .logo span{color:var(--fuchsia)}
 .header-right{display:flex;align-items:center;gap:12px}
 .header-sub{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;color:var(--blue)}
-.cart-btn{background:var(--blue);color:#fff;border:none;border-radius:100px;padding:6px 14px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:6px}
-.cart-count{background:#fff;color:var(--blue);border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+
 .admin-link{font-size:18px;cursor:pointer;padding:4px;color:var(--text3)}
 .stepper{display:flex;align-items:center;padding:16px 24px;background:var(--white);border-bottom:1px solid var(--gray2);overflow-x:auto}
 .step{display:flex;align-items:center;gap:8px;white-space:nowrap}
@@ -40,6 +39,7 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
 .cat-tab.active{background:var(--blue);border-color:var(--blue);color:#fff}
 .product-list{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
 .product-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border:1.5px solid var(--gray2);border-radius:var(--radius-sm);background:var(--white);gap:12px}
+.product-row:hover{border-color:var(--blue)}
 .product-row-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
 .product-row-name{font-size:14px;font-weight:500;color:var(--text)}
 .product-row-desc{font-size:12px;color:var(--text3);margin-top:1px}
@@ -65,10 +65,10 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
 .product-upload-group{background:var(--white);border:1.5px solid var(--gray2);border-radius:var(--radius-sm);padding:14px;margin-bottom:14px}
 .product-upload-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px}
 .product-upload-badge{background:var(--blue-light);color:var(--blue);border-radius:100px;padding:2px 10px;font-size:11px}
-.mini-upload-zone{border:1.5px dashed var(--gray2);border-radius:var(--radius-sm);padding:16px;text-align:center;transition:all .15s;background:var(--white)}
+.mini-upload-zone{border:1.5px dashed var(--gray2);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer;position:relative;transition:all .15s}
 .mini-upload-zone:hover{border-color:var(--blue);background:var(--blue-light)}
-.mini-upload-zone p{font-size:12px;color:var(--text3);margin-bottom:10px}
-.mini-upload-btn{background:var(--blue);color:#fff;border:none;border-radius:100px;padding:8px 20px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:inline-block}
+.mini-upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.mini-upload-zone p{font-size:12px;color:var(--text3);pointer-events:none}
 .mini-files-list{margin-top:8px;display:flex;flex-direction:column;gap:6px}
 .mini-file-item{display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 10px;background:var(--gray);border-radius:6px}
 .mini-file-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
@@ -108,12 +108,11 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
 .comprobante-box{border:2px solid var(--gray2);border-radius:var(--radius);padding:20px;margin-bottom:24px;background:var(--white)}
 .comprobante-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:6px}
 .comprobante-sub{font-size:12px;color:var(--text3);margin-bottom:14px;line-height:1.5}
-.comprobante-zone{border:2px dashed var(--gray2);border-radius:var(--radius-sm);padding:24px;text-align:center;cursor:pointer;position:relative;transition:all .15s;background:var(--white)}
+.comprobante-zone{border:2px dashed var(--gray2);border-radius:var(--radius-sm);padding:24px;text-align:center;cursor:pointer;position:relative;transition:all .15s}
 .comprobante-zone:hover{border-color:var(--fuchsia);background:var(--fuchsia-light)}
-.comprobante-zone input{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.comprobante-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .comprobante-zone p{font-size:13px;color:var(--text3);pointer-events:none}
 .comprobante-ok{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#e8f5e9;border-radius:var(--radius-sm);margin-top:10px}
-.comprobante-ok-icon{color:#2e7d32;font-size:16px}
 .comprobante-ok-text{font-size:13px;color:#2e7d32;font-weight:500}
 .success-screen{text-align:center;padding:40px 0}
 .success-icon{font-size:56px;margin-bottom:16px}
@@ -144,9 +143,7 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
 .admin-cat-title{font-size:13px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--gray2);margin-top:20px}
 .admin-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--gray)}
 .admin-name-input{flex:1;border:1.5px solid var(--gray2);border-radius:var(--radius-sm);padding:5px 8px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none}
-.admin-name-input:focus{border-color:var(--blue)}
 .admin-price-input{width:100px;border:1.5px solid var(--gray2);border-radius:var(--radius-sm);padding:5px 8px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;text-align:right}
-.admin-price-input:focus{border-color:var(--blue)}
 .admin-del-btn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:0 4px}
 .admin-del-btn:hover{color:var(--fuchsia)}
 .admin-add-row{display:flex;gap:8px;margin-top:10px}
@@ -154,7 +151,6 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
 .admin-add-btn{background:var(--blue);color:#fff;border:none;border-radius:100px;padding:6px 14px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
 .admin-save-btn{background:var(--blue);color:#fff;border:none;border-radius:100px;padding:12px 28px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;margin-top:16px}
 .admin-close-btn{background:transparent;color:var(--text2);border:1.5px solid var(--gray2);border-radius:100px;padding:10px 24px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;margin-top:8px}
-.admin-login{text-align:center;padding:20px 0}
 </style>
 </head>
 <body>
@@ -171,7 +167,6 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
   <div class="logo">A T I C O <span>.</span></div>
   <div class="header-right">
     <div class="header-sub">Diseno + Fotos</div>
-    <button class="cart-btn" id="cart-btn" style="display:none" onclick="goStep(2)">Carrito <span class="cart-count" id="cart-count">0</span></button>
     <span class="admin-link" onclick="openAdmin()">&#9881;</span>
   </div>
 </header>
@@ -257,18 +252,16 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
       <div class="comprobante-title">Subir comprobante de pago *</div>
       <div class="comprobante-sub">Sin comprobante no se puede confirmar el pedido.</div>
       <div class="comprobante-zone" id="comp-zone">
-        <p>&#128247; Subi la captura del comprobante de pago</p>
-        <input type="file" id="comp-input" accept="image/*,.pdf" style="display:none">
-        <button class="mini-upload-btn" style="background:var(--fuchsia)" onclick="document.getElementById('comp-input').click()">Seleccionar comprobante</button>
+        <input type="file" id="comp-input" accept="image/*,.pdf">
+        <p>&#128247; Toca aqui para subir la captura del comprobante</p>
       </div>
       <div id="comp-ok" style="display:none">
-        <div class="comprobante-ok"><span class="comprobante-ok-icon">&#10003;</span><span class="comprobante-ok-text" id="comp-name">Comprobante adjunto</span></div>
+        <div class="comprobante-ok">&#10003; <span class="comprobante-ok-text" id="comp-name">Comprobante adjunto</span></div>
       </div>
     </div>
     <div style="background:var(--gray);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:24px;font-size:13px;color:var(--text2);line-height:1.8;">
       Local: 37 N 685, Mercedes, Buenos Aires<br>
-      WhatsApp: <a href="https://wa.me/5492324633454" style="color:var(--blue)">+54 9 2324 633454</a><br>
-      Email: aticomercedes[at]gmail.com
+      WhatsApp: <a href="https://wa.me/5492324633454" style="color:var(--blue)">+54 9 2324 633454</a>
     </div>
     <div class="btn-row">
       <button class="btn-secondary" onclick="goStep(3)">Volver</button>
@@ -295,7 +288,6 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
 emailjs.init('eTfGX4pLzh_1EMPpq');
 var SURL='https://script.google.com/macros/s/AKfycbyQeVMe2ZUnjregMVqMGaoXZ_UPxgVxlY8GwnqziA01uhWIicJ7-G0TAC8EqngQ_uz4zg/exec';
 var ADMIN_PASS='atico2024';
-
 var CAT=[
   {n:'Polaroids',ic:'&#128247;',p:[
     {n:'Foto Mini Polaroid 18 Unidades',d:'Papel Standard',p:11500},
@@ -370,18 +362,13 @@ var CAT=[
     {n:'Album de Figuritas San Valentin',d:'30 Figuritas - Tamano: 20x30cm',p:27000}
   ]}
 ];
-
 var C=JSON.parse(JSON.stringify(CAT));
 var st={ci:0,cart:[],notes:'',del:'retiro',contact:{},onum:''};
-var comprobanteFile=null;
-
+var compFile=null;
 function fmt(n){return '$'+n.toLocaleString('es-AR');}
 function cartTotal(){var t=0;for(var i=0;i<st.cart.length;i++)t+=st.cart[i].price*st.cart[i].qty;return t;}
-
 function updateCartUI(){
   var count=0;for(var i=0;i<st.cart.length;i++)count+=st.cart[i].qty;
-  document.getElementById('cart-count').textContent=count;
-  document.getElementById('cart-btn').style.display=count>0?'flex':'none';
   document.getElementById('btn-step1').disabled=count===0;
   var cs=document.getElementById('cart-section');
   if(count===0){cs.classList.remove('visible');return;}
@@ -390,13 +377,12 @@ function updateCartUI(){
   for(var i=0;i<st.cart.length;i++){
     (function(idx){
       var it=st.cart[idx];
-      html+='<div class="cart-item"><div class="cart-item-info"><div class="cart-item-name">'+it.name+'</div><div class="cart-item-desc">'+it.cat+(it.desc?' - '+it.desc:'')+'</div></div><div class="cart-item-right"><div class="cart-item-price">'+fmt(it.price*it.qty)+'</div><div class="cart-qty"><button class="cart-qty-btn" onclick="cartQty('+idx+',-1)">-</button><span class="cart-qty-num">'+it.qty+'</span><button class="cart-qty-btn" onclick="cartQty('+idx+',1)">+</button></div><button class="cart-item-remove" onclick="removeCart('+idx+')">&#10005;</button></div></div>';
+      html+='<div class="cart-item"><div class="cart-item-info"><div class="cart-item-name">'+it.name+'</div><div class="cart-item-desc">'+it.cat+(it.desc?' - '+it.desc:'')+'</div></div><div class="cart-item-right"><div class="cart-item-price">'+fmt(it.price*it.qty)+'</div><div class="cart-qty"><button class="cart-qty-btn" onclick="cartQty('+idx+',-1)">-</button><span class="cart-qty-num">'+it.qty+'</span><button class="cart-qty-btn" onclick="cartQty('+idx+',1)">+</button></div><button class="cart-item-remove" onclick="removeCart('+idx+')">x</button></div></div>';
     })(i);
   }
   document.getElementById('cart-items').innerHTML=html;
   document.getElementById('cart-total-display').textContent=fmt(cartTotal());
 }
-
 function cartQty(idx,d){st.cart[idx].qty+=d;if(st.cart[idx].qty<=0)st.cart.splice(idx,1);updateCartUI();}
 function removeCart(idx){st.cart.splice(idx,1);updateCartUI();}
 function addToCart(ci,pi){
@@ -405,7 +391,6 @@ function addToCart(ci,pi){
   st.cart.push({ci:ci,pi:pi,cat:C[ci].n,name:p.n,desc:p.d,price:p.p,qty:1,files:[]});
   updateCartUI();
 }
-
 var tabsEl=document.getElementById('cat-tabs');
 for(var ti=0;ti<C.length;ti++){
   (function(i){
@@ -416,14 +401,12 @@ for(var ti=0;ti<C.length;ti++){
     tabsEl.appendChild(t);
   })(ti);
 }
-
 function selCat(i){
   st.ci=i;
   var tabs=document.querySelectorAll('.cat-tab');
   for(var t=0;t<tabs.length;t++)tabs[t].classList.toggle('active',t===i);
   renderProds();
 }
-
 function renderProds(){
   var list=document.getElementById('product-list');list.innerHTML='';
   var prods=C[st.ci].p;
@@ -439,34 +422,19 @@ function renderProds(){
   }
 }
 selCat(0);
-
-document.getElementById('btn-step1').onclick=function(){
-  buildUploadGroups();
-  goStep(2);
-};
-
+document.getElementById('btn-step1').onclick=function(){buildUploadGroups();goStep(2);};
 function buildUploadGroups(){
-  var container=document.getElementById('upload-groups');
-  container.innerHTML='';
+  var container=document.getElementById('upload-groups');container.innerHTML='';
   for(var i=0;i<st.cart.length;i++){
     (function(idx){
       var item=st.cart[idx];
-      var g=document.createElement('div');
-      g.className='product-upload-group';
-      g.innerHTML='<div class="product-upload-title">'+item.name+' <span class="product-upload-badge">'+item.cat+'</span></div>'
-        +'<div class="mini-upload-zone" id="uz'+idx+'">'
-        +'<p>Selecciona las fotos para este producto</p>'
-        +'<input type="file" id="fi'+idx+'" multiple accept="image/*,.pdf" style="display:none">'
-        +'<button class="mini-upload-btn" onclick="document.getElementById('fi'+idx+'').click()">Seleccionar fotos</button>'
-        +'</div>'
-        +'<div class="mini-files-list" id="fl'+idx+'"></div>';
+      var g=document.createElement('div');g.className='product-upload-group';
+      g.innerHTML='<div class="product-upload-title">'+item.name+' <span class="product-upload-badge">'+item.cat+'</span></div><div class="mini-upload-zone" id="uz'+idx+'"><input type="file" id="fi'+idx+'" multiple accept="image/*,.pdf"><p>Toca aqui para subir las fotos de este producto</p></div><div class="mini-files-list" id="fl'+idx+'"></div>';
       container.appendChild(g);
-      var fi=document.getElementById('fi'+idx);
-      fi.onchange=function(){addFilesToItem(idx,fi.files);};
+      document.getElementById('fi'+idx).onchange=function(e){addFilesToItem(idx,e.target.files);};
     })(i);
   }
 }
-
 function addFilesToItem(idx,nf){
   for(var i=0;i<nf.length;i++){
     var found=false;
@@ -475,10 +443,8 @@ function addFilesToItem(idx,nf){
   }
   renderItemFiles(idx);
 }
-
 function renderItemFiles(idx){
-  var list=document.getElementById('fl'+idx);if(!list)return;
-  list.innerHTML='';
+  var list=document.getElementById('fl'+idx);if(!list)return;list.innerHTML='';
   for(var i=0;i<st.cart[idx].files.length;i++){
     (function(fi){
       var f=st.cart[idx].files[fi];
@@ -490,14 +456,12 @@ function renderItemFiles(idx){
     })(i);
   }
 }
-
 function setDelivery(t){
   st.del=t;
   document.getElementById('btn-retiro').classList.toggle('selected',t==='retiro');
   document.getElementById('btn-envio').classList.toggle('selected',t==='envio');
   document.getElementById('address-fields').classList.toggle('visible',t==='envio');
 }
-
 function validateStep3(){
   var n=document.getElementById('f-nombre').value.trim();
   var a=document.getElementById('f-apellido').value.trim();
@@ -516,7 +480,6 @@ function validateStep3(){
   st.contact.nombre=n;st.contact.apellido=a;st.contact.tel=tel;st.contact.email=em;
   buildSummary();goStep(4);
 }
-
 function buildSummary(){
   st.onum='AT-'+Date.now().toString().slice(-6);
   document.getElementById('order-num').textContent=st.onum;
@@ -539,24 +502,21 @@ function buildSummary(){
   document.getElementById('summary-body').innerHTML=html;
   document.getElementById('summary-total-price').textContent=fmt(cartTotal());
 }
-
+function copyAlias(){navigator.clipboard.writeText('somos.atico').then(function(){alert('Alias copiado: somos.atico');}).catch(function(){prompt('Copia el alias:','somos.atico');});}
 document.getElementById('comp-input').onchange=function(e){
-  if(e.target.files.length>0){
-    comprobanteFile=e.target.files[0];
-    document.getElementById('comp-name').textContent=comprobanteFile.name;
+  if(e.target.files&&e.target.files[0]){
+    compFile=e.target.files[0];
+    document.getElementById('comp-name').textContent=compFile.name;
     document.getElementById('comp-ok').style.display='block';
-    document.getElementById('btn-confirm').disabled=false;
-    document.getElementById('btn-confirm').textContent='Confirmar y enviar pedido';
+    var btn=document.getElementById('btn-confirm');
+    btn.disabled=false;
+    btn.textContent='Confirmar y enviar pedido';
   }
 };
-
-function copyAlias(){navigator.clipboard.writeText('somos.atico').then(function(){alert('Alias copiado: somos.atico');}).catch(function(){prompt('Copia el alias:','somos.atico');});}
-
 function f2b64(file){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result.split(',')[1]);};r.onerror=rej;r.readAsDataURL(file);});}
 function showLdr(t,s,p){document.getElementById('loader-text').textContent=t||'';document.getElementById('loader-sub').textContent=s||'';document.getElementById('loader-fill').style.width=(p||0)+'%';document.getElementById('loader').classList.add('visible');}
 function setLdr(t,s,p){document.getElementById('loader-text').textContent=t||'';document.getElementById('loader-sub').textContent=s||'';document.getElementById('loader-fill').style.width=p+'%';}
 function hideLdr(){document.getElementById('loader').classList.remove('visible');}
-
 async function confirmOrder(){
   document.getElementById('btn-confirm').disabled=true;
   var cn=st.contact.nombre+' '+st.contact.apellido;
@@ -564,10 +524,10 @@ async function confirmOrder(){
   var total=cartTotal();
   showLdr('Subiendo comprobante...','',5);
   var compUrl='';
-  if(comprobanteFile){
+  if(compFile){
     try{
-      var cb=await f2b64(comprobanteFile);
-      var cr=await fetch(SURL,{method:'POST',body:JSON.stringify({clientName:cn,orderNum:st.onum,productName:'Comprobante de Pago',files:[{name:comprobanteFile.name,mimeType:comprobanteFile.type||'image/jpeg',data:cb}]})});
+      var cb=await f2b64(compFile);
+      var cr=await fetch(SURL,{method:'POST',body:JSON.stringify({clientName:cn,orderNum:st.onum,productName:'Comprobante de Pago',files:[{name:compFile.name,mimeType:compFile.type||'image/jpeg',data:cb}]})});
       var cj=await cr.json();if(cj.success)compUrl=cj.folderUrl;
     }catch(e){console.error(e);}
   }
@@ -604,7 +564,7 @@ async function confirmOrder(){
   wa+='\uD83D\uDCB0 *Total: '+fmt(total)+'*\n\n\uD83D\uDC64 *Cliente:* '+cn+'\n\uD83D\uDCF1 *Tel:* '+st.contact.tel+'\n\uD83D\uDCE7 *Email:* '+st.contact.email+'\n\uD83D\uDE9A *Entrega:* '+(st.del==='retiro'?'Retiro en local':'Envio a domicilio')+'\n';
   if(st.del==='envio')wa+='\uD83D\uDCCD *Direccion:* '+dir+'\n';
   if(st.notes)wa+='\uD83D\uDCDD *Aclaraciones:* '+st.notes+'\n';
-  wa+='\uD83D\uDCB3 *Comprobante:* '+(compUrl||comprobanteFile.name)+'\n';
+  wa+='\uD83D\uDCB3 *Comprobante:* '+(compUrl||(compFile?compFile.name:'adjunto'))+'\n';
   var waLink='https://wa.me/5492324633454?text='+encodeURIComponent(wa);
   document.getElementById('wa-link').href=waLink;
   var card='<div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--gray2)"><div style="font-family:Bebas Neue,sans-serif;font-size:18px;letter-spacing:2px;color:var(--blue)">N\u00b0 '+st.onum+'</div></div>';
@@ -618,10 +578,9 @@ async function confirmOrder(){
   goStep('success');
   setTimeout(function(){window.open(waLink,'_blank');},800);
 }
-
 function resetApp(){
   st={ci:0,cart:[],notes:'',del:'retiro',contact:{},onum:''};
-  comprobanteFile=null;
+  compFile=null;
   ['notes','f-nombre','f-apellido','f-tel','f-email','f-calle','f-ciudad','f-provincia','f-cp'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('upload-groups').innerHTML='';
   document.getElementById('comp-input').value='';
@@ -629,60 +588,53 @@ function resetApp(){
   document.getElementById('btn-confirm').disabled=true;
   document.getElementById('btn-confirm').textContent='Adjunta el comprobante para confirmar';
   document.getElementById('stepper').style.display='flex';
-  setDelivery('retiro');
-  updateCartUI();
-  selCat(0);
-  goStep(1);
+  setDelivery('retiro');updateCartUI();selCat(0);goStep(1);
 }
-
 function goStep(n){
   var scr=document.querySelectorAll('.screen');
   for(var i=0;i<scr.length;i++)scr[i].classList.remove('active');
-  if(n==='success'){
-    document.getElementById('screen-success').classList.add('active');
-    document.getElementById('stepper').style.display='none';
-    window.scrollTo({top:0,behavior:'smooth'});return;
-  }
+  if(n==='success'){document.getElementById('screen-success').classList.add('active');document.getElementById('stepper').style.display='none';window.scrollTo({top:0,behavior:'smooth'});return;}
   document.getElementById('screen-'+n).classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
   var steps=document.querySelectorAll('.step');
   for(var s=0;s<steps.length;s++){var num=parseInt(steps[s].dataset.step);steps[s].classList.remove('active','done');if(num===n)steps[s].classList.add('active');if(num<n)steps[s].classList.add('done');}
   for(var l=1;l<=3;l++){var ln=document.getElementById('line-'+l);if(ln)ln.classList.toggle('done',l<n);}
 }
-
 var adminAuth=false;
 function openAdmin(){
   if(!adminAuth){
-    document.getElementById('admin-panel').innerHTML='<div class="admin-login"><div class="admin-title">ADMIN</div><p style="font-size:14px;margin-bottom:16px">Ingresa la contrasena</p><input class="form-input" id="adm-pass" type="password" placeholder="Contrasena" style="margin-bottom:12px"><button class="admin-save-btn" onclick="checkAdminPass()">Ingresar</button><button class="admin-close-btn" onclick="closeAdmin()">Cancelar</button></div>';
+    document.getElementById('admin-panel').innerHTML='<div style="text-align:center;padding:20px"><div class="admin-title">ADMIN</div><p style="font-size:14px;margin:16px 0">Ingresa la contrasena</p><input class="form-input" id="adm-pass" type="password" placeholder="Contrasena" style="margin-bottom:12px"><button class="admin-save-btn" onclick="checkAdminPass()">Ingresar</button><button class="admin-close-btn" onclick="closeAdmin()">Cancelar</button></div>';
     document.getElementById('admin-overlay').classList.add('visible');return;
   }
   renderAdmin();document.getElementById('admin-overlay').classList.add('visible');
 }
-function checkAdminPass(){
-  var v=document.getElementById('adm-pass').value;
-  if(v===ADMIN_PASS){adminAuth=true;renderAdmin();}else{alert('Contrasena incorrecta');}
-}
+function checkAdminPass(){var v=document.getElementById('adm-pass').value;if(v===ADMIN_PASS){adminAuth=true;renderAdmin();}else{alert('Contrasena incorrecta');}}
 function closeAdmin(){document.getElementById('admin-overlay').classList.remove('visible');}
 function renderAdmin(){
   var html='<div class="admin-title">ADMIN</div><div class="admin-sub">Edita nombres, precios, agrega o elimina productos</div>';
   for(var ci=0;ci<C.length;ci++){
     html+='<div class="admin-cat-title">'+C[ci].n+'</div>';
     for(var pi=0;pi<C[ci].p.length;pi++){
-      html+='<div class="admin-item"><input class="admin-name-input" type="text" data-ci="'+ci+'" data-pi="'+pi+'" data-f="n" value="'+C[ci].p[pi].n+'"><input class="admin-name-input" type="text" data-ci="'+ci+'" data-pi="'+pi+'" data-f="d" value="'+C[ci].p[pi].d+'" placeholder="Detalle" style="max-width:110px"><input class="admin-price-input" type="number" data-ci="'+ci+'" data-pi="'+pi+'" value="'+C[ci].p[pi].p+'"><button class="admin-del-btn" onclick="adminDel('+ci+','+pi+')">&#10005;</button></div>';
+      html+='<div class="admin-item"><input class="admin-name-input" type="text" data-ci="'+ci+'" data-pi="'+pi+'" data-f="n" value="'+C[ci].p[pi].n+'"><input class="admin-name-input" type="text" data-ci="'+ci+'" data-pi="'+pi+'" data-f="d" value="'+C[ci].p[pi].d+'" placeholder="Detalle" style="max-width:110px"><input class="admin-price-input" type="number" data-ci="'+ci+'" data-pi="'+pi+'" value="'+C[ci].p[pi].p+'"><button class="admin-del-btn" onclick="adminDel('+ci+','+pi+')">x</button></div>';
     }
     html+='<div class="admin-add-row"><input class="admin-add-input" id="an'+ci+'" placeholder="Nombre"><input class="admin-add-input" id="ad'+ci+'" placeholder="Detalle" style="max-width:100px"><input class="admin-add-input" id="ap'+ci+'" type="number" placeholder="Precio" style="max-width:80px"><button class="admin-add-btn" onclick="adminAdd('+ci+')">+ Agregar</button></div>';
   }
   html+='<button class="admin-save-btn" onclick="adminSave()">Guardar todo</button><button class="admin-close-btn" onclick="closeAdmin()">Cerrar</button>';
   document.getElementById('admin-panel').innerHTML=html;
 }
-function adminDel(ci,pi){if(!confirm('Eliminar '+C[ci].p[pi].n+'?'))return;C[ci].p.splice(pi,1);adminSaveStorage();renderAdmin();}
+function adminDel(ci,pi){if(!confirm('Eliminar?'))return;C[ci].p.splice(pi,1);renderAdmin();}
 function adminAdd(ci){
   var n=document.getElementById('an'+ci).value.trim();
   var d=document.getElementById('ad'+ci).value.trim();
   var p=parseInt(document.getElementById('ap'+ci).value)||0;
   if(!n){alert('Ingresa el nombre.');return;}
-  C[ci].p.push({n:n,d:d,p:p});adminSaveStorage();renderAdmin();
+  C[ci].p.push({n:n,d:d,p:p});renderAdmin();
 }
 function adminSave(){
   document.querySelectorAll('.admin-name-input').forEach(function(el){C[parseInt(el.dataset.ci)].p[parseInt(el.dataset.pi)][el.dataset.f]=el.value;});
-  document.querySelectorAll('.admin-price-input').forEach(function(el){C[parseInt(el.dataset.ci)].p[parseInt(el.dataset.p
+  document.querySelectorAll('.admin-price-input').forEach(function(el){C[parseInt(el.dataset.ci)].p[parseInt(el.dataset.pi)].p=parseInt(el.value)||0;});
+  closeAdmin();selCat(st.ci);alert('Cambios guardados!');
+}
+</script>
+</body>
+</html>
