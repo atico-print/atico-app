@@ -293,7 +293,7 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
     <div style="background:var(--gray);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:24px;font-size:13px;color:var(--text2);line-height:1.8;">
       Local: 37 N 685, Mercedes, Buenos Aires<br>
       WhatsApp: <a href="https://wa.me/5492324633454" style="color:var(--blue)">+54 9 2324 633454</a><br>
-      Email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5d3c29343e3230382f3e3839382e1d3a303c3431733e3230">[email&#160;protected]</a>
+      Email: aticomercedes@gmail.com
     </div>
     <div class="comprobante-box">
       <div class="comprobante-title">Paso previo: realizar el pago</div>
@@ -330,7 +330,7 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
     </div>
   </div>
 </main>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 emailjs.init('eTfGX4pLzh_1EMPpq');
 var SURL='https://script.google.com/macros/s/AKfycbyQeVMe2ZUnjregMVqMGaoXZ_UPxgVxlY8GwnqziA01uhWIicJ7-G0TAC8EqngQ_uz4zg/exec';
 var ADMIN_PASS='atico2024';
@@ -489,7 +489,7 @@ function renderProds(){
   }
 }
 selCat(0);
-document.getElementById('btn-step1').onclick=function(){goStep(2);setTimeout(buildUploadGroups,50);};
+document.getElementById('btn-step1').onclick=function(){buildUploadGroups();goStep(2);};
 
 function buildUploadGroups(){
   var container=document.getElementById('product-upload-groups');
@@ -735,7 +735,6 @@ function goStep(n){
   for(var i=0;i<scr.length;i++)scr[i].classList.remove('active');
   if(n==='success'){document.getElementById('screen-success').classList.add('active');document.getElementById('stepper').style.display='none';window.scrollTo({top:0,behavior:'smooth'});return;}
   document.getElementById('screen-'+n).classList.add('active');
-  if(n===2){setTimeout(buildUploadGroups,50);}
   window.scrollTo({top:0,behavior:'smooth'});
   var steps=document.querySelectorAll('.step');
   for(var s=0;s<steps.length;s++){var num=parseInt(steps[s].dataset.step);steps[s].classList.remove('active','done');if(num===n)steps[s].classList.add('active');if(num<n)steps[s].classList.add('done');}
@@ -816,4 +815,13 @@ function saveAdminData(){
   }
   saveToStorage();
   closeAdmin();
-  s
+  selCat(st.ci);
+  alert('Cambios guardados correctamente!');
+}
+function saveToStorage(){
+  try{localStorage.setItem('atico_catalog',JSON.stringify(C));}catch(e){}
+}
+function saveAdminPrices(){saveAdminData();}
+</script>
+</body>
+</html>
