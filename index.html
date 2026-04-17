@@ -105,6 +105,13 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
 .payment-alias{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:4px;color:var(--fuchsia);margin-bottom:8px}
 .payment-copy-btn{background:var(--fuchsia);color:#fff;border:none;border-radius:100px;padding:8px 20px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif}
 .payment-note{font-size:12px;color:var(--text3);margin-top:8px}
+.descuento-box{border:1.5px solid var(--gray2);border-radius:var(--radius-sm);padding:16px;margin-bottom:16px;background:var(--white)}
+.descuento-row{display:flex;gap:8px;align-items:center}
+.descuento-input{flex:1;border:1.5px solid var(--gray2);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;text-transform:uppercase}
+.descuento-input:focus{border-color:var(--blue)}
+.descuento-btn{background:var(--blue);color:#fff;border:none;border-radius:100px;padding:10px 20px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.descuento-ok{margin-top:10px;padding:10px 14px;background:#e8f5e9;border-radius:var(--radius-sm);font-size:13px;color:#2e7d32;font-weight:500;display:none}
+.descuento-error{margin-top:10px;padding:10px 14px;background:#ffebee;border-radius:var(--radius-sm);font-size:13px;color:#c62828;display:none}
 .comprobante-box{border:2px solid var(--gray2);border-radius:var(--radius);padding:20px;margin-bottom:24px;background:var(--white)}
 .comprobante-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:6px}
 .comprobante-sub{font-size:12px;color:var(--text3);margin-bottom:14px;line-height:1.5}
@@ -248,6 +255,15 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
       <button class="payment-copy-btn" onclick="copyAlias()">Copiar alias</button>
       <div class="payment-note">Transferi el total y luego subi el comprobante abajo</div>
     </div>
+    <div class="descuento-box">
+      <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:10px">Tenes un codigo de descuento?</div>
+      <div class="descuento-row">
+        <input class="descuento-input" id="desc-input" type="text" placeholder="Ingresa tu codigo">
+        <button class="descuento-btn" onclick="aplicarDescuento()">Aplicar</button>
+      </div>
+      <div class="descuento-ok" id="desc-ok"></div>
+      <div class="descuento-error" id="desc-error"></div>
+    </div>
     <div class="comprobante-box">
       <div class="comprobante-title">Subir comprobante de pago *</div>
       <div class="comprobante-sub">Sin comprobante no se puede confirmar el pedido.</div>
@@ -288,6 +304,13 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
 emailjs.init('eTfGX4pLzh_1EMPpq');
 var SURL='https://script.google.com/macros/s/AKfycbyQeVMe2ZUnjregMVqMGaoXZ_UPxgVxlY8GwnqziA01uhWIicJ7-G0TAC8EqngQ_uz4zg/exec';
 var ADMIN_PASS='atico2024';
+var DESCUENTOS={
+  'ATICO10': 10,
+  'ATICO15': 15,
+  'ATICO20': 20,
+  'ATICO30': 30
+};
+var descuentoAplicado=0;
 var CAT=[
   {n:'Polaroids',ic:'&#128247;',p:[
     {n:'Foto Mini Polaroid 18 Unidades',d:'Papel Standard',p:11500},
@@ -513,6 +536,37 @@ document.getElementById('comp-input').onchange=function(e){
     btn.textContent='Confirmar y enviar pedido';
   }
 };
+function aplicarDescuento(){
+  var cod=document.getElementById('desc-input').value.trim().toUpperCase();
+  var ok=document.getElementById('desc-ok');
+  var err=document.getElementById('desc-error');
+  ok.style.display='none';err.style.display='none';
+  if(!cod){err.textContent='Ingresa un codigo.';err.style.display='block';return;}
+  if(DESCUENTOS[cod]){
+    descuentoAplicado=DESCUENTOS[cod];
+    ok.textContent='Codigo '+cod+' aplicado! Descuento del '+descuentoAplicado+'%';
+    ok.style.display='block';
+    updateTotalConDescuento();
+  }else{
+    descuentoAplicado=0;
+    err.textContent='Codigo invalido. Intentá de nuevo.';
+    err.style.display='block';
+    updateTotalConDescuento();
+  }
+}
+function updateTotalConDescuento(){
+  var total=cartTotal();
+  var totalFinal=descuentoAplicado>0?Math.round(total*(1-descuentoAplicado/100)):total;
+  document.getElementById('summary-total-price').textContent=fmt(totalFinal);
+  if(descuentoAplicado>0){
+    document.getElementById('summary-total-price').innerHTML=
+      '<span style="text-decoration:line-through;font-size:20px;color:var(--text3)">'+fmt(total)+'</span> '+fmt(totalFinal);
+  }
+}
+function cartTotalFinal(){
+  var total=cartTotal();
+  return descuentoAplicado>0?Math.round(total*(1-descuentoAplicado/100)):total;
+}
 function f2b64(file){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result.split(',')[1]);};r.onerror=rej;r.readAsDataURL(file);});}
 function showLdr(t,s,p){document.getElementById('loader-text').textContent=t||'';document.getElementById('loader-sub').textContent=s||'';document.getElementById('loader-fill').style.width=(p||0)+'%';document.getElementById('loader').classList.add('visible');}
 function setLdr(t,s,p){document.getElementById('loader-text').textContent=t||'';document.getElementById('loader-sub').textContent=s||'';document.getElementById('loader-fill').style.width=p+'%';}
@@ -521,7 +575,7 @@ async function confirmOrder(){
   document.getElementById('btn-confirm').disabled=true;
   var cn=st.contact.nombre+' '+st.contact.apellido;
   var dir=st.del==='envio'?(st.contact.calle+', '+st.contact.ciudad+', '+st.contact.provincia+' '+st.contact.cp):'Retiro en local - 37 N 685, Mercedes';
-  var total=cartTotal();
+  var total=cartTotalFinal();
   showLdr('Subiendo comprobante...','',5);
   var compUrl='';
   if(compFile){
@@ -581,6 +635,10 @@ async function confirmOrder(){
 function resetApp(){
   st={ci:0,cart:[],notes:'',del:'retiro',contact:{},onum:''};
   compFile=null;
+  descuentoAplicado=0;
+  var di=document.getElementById('desc-input');if(di)di.value='';
+  var dok=document.getElementById('desc-ok');if(dok)dok.style.display='none';
+  var derr=document.getElementById('desc-error');if(derr)derr.style.display='none';
   ['notes','f-nombre','f-apellido','f-tel','f-email','f-calle','f-ciudad','f-provincia','f-cp'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('upload-groups').innerHTML='';
   document.getElementById('comp-input').value='';
