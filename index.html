@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ATICO | Fotos</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3D3BF3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ATICO">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
@@ -692,6 +698,13 @@ function adminSave(){
   document.querySelectorAll('.admin-name-input').forEach(function(el){C[parseInt(el.dataset.ci)].p[parseInt(el.dataset.pi)][el.dataset.f]=el.value;});
   document.querySelectorAll('.admin-price-input').forEach(function(el){C[parseInt(el.dataset.ci)].p[parseInt(el.dataset.pi)].p=parseInt(el.value)||0;});
   closeAdmin();selCat(st.ci);alert('Cambios guardados!');
+}
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('sw.js').catch(function(e){console.log('SW error:',e);});
+  });
 }
 </script>
 </body>
