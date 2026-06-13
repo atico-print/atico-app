@@ -215,7 +215,7 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
     </div>
     <div class="btn-row">
       <button class="btn-secondary" onclick="goStep(1)">Volver</button>
-      <button class="btn-primary" onclick="goStep(3)">Continuar</button>
+      <button class="btn-primary" onclick="validateStep2()">Continuar</button>
     </div>
   </div>
   <div class="screen" id="screen-3">
@@ -453,6 +453,20 @@ function renderProds(){
 }
 selCat(0);
 document.getElementById('btn-step1').onclick=function(){buildUploadGroups();goStep(2);};
+function validateStep2(){
+  var faltantes=[];
+  for(var i=0;i<st.cart.length;i++){
+    if(st.cart[i].files.length===0){
+      faltantes.push(st.cart[i].name);
+    }
+  }
+  if(faltantes.length>0){
+    alert('Falta subir fotos para:\n\n- '+faltantes.join('\n- '));
+    return;
+  }
+  st.notes=document.getElementById('notes').value;
+  goStep(3);
+}
 function buildUploadGroups(){
   var container=document.getElementById('upload-groups');container.innerHTML='';
   for(var i=0;i<st.cart.length;i++){
