@@ -12,6 +12,8 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css">
+<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--blue:#3D3BF3;--blue-dark:#2a29c4;--blue-light:#eeeffe;--fuchsia:#FF2D9B;--fuchsia-light:#fff0f8;--white:#ffffff;--gray:#f5f5f7;--gray2:#e8e8ed;--text:#111;--text2:#555;--text3:#999;--radius:16px;--radius-sm:10px}
@@ -139,6 +141,17 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
 .btn-row{display:flex;gap:12px;margin-top:8px}
 .btn-row .btn-secondary{flex:0 0 auto}
 .btn-row .btn-primary{flex:1}
+.cropper-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:999;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:16px}
+.cropper-modal-overlay.visible{display:flex}
+.cropper-modal-box{background:var(--white);border-radius:var(--radius);width:100%;max-width:500px;overflow:hidden}
+.cropper-modal-header{background:var(--blue);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.cropper-modal-title{font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:2px;color:#fff}
+.cropper-modal-body{padding:16px}
+.cropper-container-wrap{max-height:350px;overflow:hidden;border-radius:var(--radius-sm);background:#111}
+.cropper-orient{display:flex;gap:8px;margin-bottom:12px}
+.cropper-orient-btn{flex:1;padding:8px;border:1.5px solid var(--gray2);border-radius:var(--radius-sm);background:var(--white);cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);font-family:"DM Sans",sans-serif;transition:all .15s}
+.cropper-orient-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue)}
+.cropper-modal-footer{display:flex;gap:10px;padding:12px 16px;border-top:1px solid var(--gray2)}
 .btn-wa{background:#25D366;color:#fff;border:none;border-radius:100px;padding:14px 32px;font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;max-width:320px;margin:0 auto 16px}
 .loader-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.95);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px}
 .loader-overlay.visible{display:flex}
@@ -306,6 +319,26 @@ h2{font-size:12px;font-weight:400;color:var(--text3);margin-bottom:24px;letter-s
     </div>
   </div>
 </main>
+<div class="cropper-modal-overlay" id="cropper-overlay">
+  <div class="cropper-modal-box">
+    <div class="cropper-modal-header">
+      <div class="cropper-modal-title" id="cropper-modal-title">Recortar foto</div>
+    </div>
+    <div class="cropper-modal-body">
+      <div class="cropper-orient" id="cropper-orient">
+        <button class="cropper-orient-btn active" onclick="setCropOrientation('vertical')">&#11015; Vertical</button>
+        <button class="cropper-orient-btn" onclick="setCropOrientation('horizontal')">&#11013; Horizontal</button>
+      </div>
+      <div class="cropper-container-wrap">
+        <img id="cropper-img" src="" style="max-width:100%;display:block">
+      </div>
+    </div>
+    <div class="cropper-modal-footer">
+      <button class="btn-secondary" style="flex:1" onclick="closeCropper()">Cancelar</button>
+      <button class="btn-primary" style="flex:1" onclick="confirmCrop()">Confirmar recorte</button>
+    </div>
+  </div>
+</div>
 <script>
 emailjs.init('eTfGX4pLzh_1EMPpq');
 var SURL='https://script.google.com/macros/s/AKfycbyQeVMe2ZUnjregMVqMGaoXZ_UPxgVxlY8GwnqziA01uhWIicJ7-G0TAC8EqngQ_uz4zg/exec';
@@ -317,6 +350,25 @@ var DESCUENTOS={
   'ATICO30': 30
 };
 var descuentoAplicado=0;
+var CROP_RATIOS={
+  'Foto 10x15':{w:2,h:3},
+  'Foto 13x18':{w:13,h:18},
+  'Foto 15x21':{w:5,h:7},
+  'Foto 20x30':{w:2,h:3},
+  'Foto 30x42':{w:5,h:7},
+  'Foto 33x48':{w:11,h:16},
+  'Foto 10x15 Pack x10':{w:2,h:3},
+  'Foto 10x15 Pack x20':{w:2,h:3},
+  'Foto 10x15 Pack x50':{w:2,h:3},
+  'Foto 13x18 Pack x10':{w:13,h:18},
+  'Foto 13x18 Pack x20':{w:13,h:18},
+  'Foto 13x18 Pack x50':{w:13,h:18},
+  'Foto Mini Polaroid 18 Unidades':{w:3,h:2},
+  'Foto Polaroid 15 Unidades':{w:5,h:4}
+};
+var cropperInstance=null;
+var cropperCurrentIdx=null;
+var cropperOrientation='vertical';
 var CAT=[
   {n:'Polaroids',ic:'&#128247;',p:[
     {n:'Foto Mini Polaroid 18 Unidades',d:'Papel Standard',p:11500},
@@ -388,8 +440,7 @@ var CAT=[
   ]},
   {n:'Album de Figuritas',ic:'&#127882;',p:[
     {n:'Album de Figuritas',d:'30 Figuritas - Tamano: 20x30cm',p:45000},
-    {n:'Album de Figuritas San Valentin',d:'30 Figuritas - Tamano: 20x30cm',p:27000},
-    {n:'Album de Figuritas Papá Campeón',d:'32 Figuritas - Tamano: 15x21cm',p:30000}
+    {n:'Album de Figuritas San Valentin',d:'30 Figuritas - Tamano: 20x30cm',p:27000}
   ]}
 ];
 var C=JSON.parse(JSON.stringify(CAT));
@@ -472,10 +523,31 @@ function buildUploadGroups(){
   for(var i=0;i<st.cart.length;i++){
     (function(idx){
       var item=st.cart[idx];
+      var usesCropper=CROP_RATIOS[item.name]!==undefined;
       var g=document.createElement('div');g.className='product-upload-group';
-      g.innerHTML='<div class="product-upload-title">'+item.name+' <span class="product-upload-badge">'+item.cat+'</span></div><div class="mini-upload-zone" id="uz'+idx+'"><input type="file" id="fi'+idx+'" multiple accept="image/*,.pdf"><p>Toca aqui para subir las fotos de este producto</p></div><div class="mini-files-list" id="fl'+idx+'"></div>';
-      container.appendChild(g);
-      document.getElementById('fi'+idx).onchange=function(e){addFilesToItem(idx,e.target.files);};
+      if(usesCropper){
+        g.innerHTML='<div class="product-upload-title">'+item.name+' <span class="product-upload-badge">'+item.cat+'</span></div>'
+          +'<div class="mini-upload-zone" id="uz'+idx+'">'
+          +'<input type="file" id="fi'+idx+'" multiple accept="image/*">'
+          +'<p>Toca aqui para seleccionar y recortar tus fotos</p>'
+          +'</div>'
+          +'<div class="mini-files-list" id="fl'+idx+'"></div>';
+        container.appendChild(g);
+        document.getElementById('fi'+idx).onchange=function(e){
+          var files=Array.from(e.target.files);
+          if(files.length>0)openCropper(idx,files[0]);
+          e.target.value='';
+        };
+      } else {
+        g.innerHTML='<div class="product-upload-title">'+item.name+' <span class="product-upload-badge">'+item.cat+'</span></div>'
+          +'<div class="mini-upload-zone" id="uz'+idx+'">'
+          +'<input type="file" id="fi'+idx+'" multiple accept="image/*,.pdf">'
+          +'<p>Toca aqui para subir las fotos de este producto</p>'
+          +'</div>'
+          +'<div class="mini-files-list" id="fl'+idx+'"></div>';
+        container.appendChild(g);
+        document.getElementById('fi'+idx).onchange=function(e){addFilesToItem(idx,e.target.files);};
+      }
     })(i);
   }
 }
@@ -653,6 +725,68 @@ async function confirmOrder(){
   goStep('success');
   setTimeout(function(){window.open(waLink,'_blank');},800);
 }
+function getRatio(productName, orientation){
+  var base=CROP_RATIOS[productName];
+  if(!base)return null;
+  if(orientation==='horizontal')return {w:base.h,h:base.w};
+  return {w:base.w,h:base.h};
+}
+
+function openCropper(idx, file){
+  cropperCurrentIdx=idx;
+  cropperOrientation='vertical';
+  var item=st.cart[idx];
+  document.getElementById('cropper-modal-title').textContent='Recortar - '+item.name;
+  var btns=document.querySelectorAll('.cropper-orient-btn');
+  btns[0].classList.add('active');btns[1].classList.remove('active');
+  var url=URL.createObjectURL(file);
+  var img=document.getElementById('cropper-img');
+  img.src=url;
+  document.getElementById('cropper-overlay').classList.add('visible');
+  if(cropperInstance){cropperInstance.destroy();cropperInstance=null;}
+  img.onload=function(){
+    var ratio=getRatio(item.name,'vertical');
+    cropperInstance=new Cropper(img,{
+      aspectRatio:ratio?ratio.w/ratio.h:NaN,
+      viewMode:1,
+      dragMode:'move',
+      autoCropArea:1,
+      responsive:true
+    });
+  };
+}
+
+function setCropOrientation(orient){
+  cropperOrientation=orient;
+  var btns=document.querySelectorAll('.cropper-orient-btn');
+  btns[0].classList.toggle('active',orient==='vertical');
+  btns[1].classList.toggle('active',orient==='horizontal');
+  var item=st.cart[cropperCurrentIdx];
+  var ratio=getRatio(item.name,orient);
+  if(cropperInstance&&ratio)cropperInstance.setAspectRatio(ratio.w/ratio.h);
+}
+
+function confirmCrop(){
+  if(!cropperInstance)return;
+  var item=st.cart[cropperCurrentIdx];
+  var ratio=getRatio(item.name,cropperOrientation);
+  var w=ratio?Math.round(ratio.w*300):1200;
+  var h=ratio?Math.round(ratio.h*300):1800;
+  cropperInstance.getCroppedCanvas({width:w,height:h,imageSmoothingQuality:'high'}).toBlob(function(blob){
+    var fname=item.name.replace(/\s+/g,'_')+'_'+cropperOrientation+'.jpg';
+    var file=new File([blob],fname,{type:'image/jpeg'});
+    st.cart[cropperCurrentIdx].files.push(file);
+    renderItemFiles(cropperCurrentIdx);
+    closeCropper();
+  },'image/jpeg',0.92);
+}
+
+function closeCropper(){
+  document.getElementById('cropper-overlay').classList.remove('visible');
+  if(cropperInstance){cropperInstance.destroy();cropperInstance=null;}
+  cropperCurrentIdx=null;
+}
+
 function resetApp(){
   st={ci:0,cart:[],notes:'',del:'retiro',contact:{},onum:''};
   compFile=null;
