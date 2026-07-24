@@ -369,6 +369,8 @@ var CROP_RATIOS={
 var cropperInstance=null;
 var cropperCurrentIdx=null;
 var cropperOrientation='vertical';
+var cropperQueue=[];
+var cropperQueuePos=0;
 var CAT=[
   {n:'Polaroids',ic:'&#128247;',p:[
     {n:'Foto Mini Polaroid 18 Unidades',d:'Papel Standard',p:11500},
@@ -535,7 +537,7 @@ function buildUploadGroups(){
         container.appendChild(g);
         document.getElementById('fi'+idx).onchange=function(e){
           var files=Array.from(e.target.files);
-          if(files.length>0)openCropper(idx,files[0]);
+          if(files.length>0)openCropperQueue(idx,files);
           e.target.value='';
         };
       } else {
@@ -732,16 +734,26 @@ function getRatio(productName, orientation){
   return {w:base.w,h:base.h};
 }
 
-function openCropper(idx, file){
+function openCropperQueue(idx, files){
   cropperCurrentIdx=idx;
+  cropperQueue=Array.from(files);
+  cropperQueuePos=0;
+  showCropperForCurrent();
+}
+
+function showCropperForCurrent(){
+  if(cropperQueuePos>=cropperQueue.length){closeCropper();return;}
+  var file=cropperQueue[cropperQueuePos];
+  var item=st.cart[cropperCurrentIdx];
   cropperOrientation='vertical';
-  var item=st.cart[idx];
-  document.getElementById('cropper-modal-title').textContent='Recortar - '+item.name;
+  var total=cropperQueue.length;
+  var pos=cropperQueuePos+1;
+  document.getElementById('cropper-modal-title').textContent='Recortar foto '+pos+' de '+total;
   var btns=document.querySelectorAll('.cropper-orient-btn');
   btns[0].classList.add('active');btns[1].classList.remove('active');
   var url=URL.createObjectURL(file);
   var img=document.getElementById('cropper-img');
-  img.src=url;
+  img.src='';
   document.getElementById('cropper-overlay').classList.add('visible');
   if(cropperInstance){cropperInstance.destroy();cropperInstance=null;}
   img.onload=function(){
@@ -754,6 +766,11 @@ function openCropper(idx, file){
       responsive:true
     });
   };
+  img.src=url;
+}
+
+function openCropper(idx, file){
+  openCropperQueue(idx, [file]);
 }
 
 function setCropOrientation(orient){
@@ -772,12 +789,16 @@ function confirmCrop(){
   var ratio=getRatio(item.name,cropperOrientation);
   var w=ratio?Math.round(ratio.w*300):1200;
   var h=ratio?Math.round(ratio.h*300):1800;
+  var pos=cropperQueuePos;
+  var idx=cropperCurrentIdx;
   cropperInstance.getCroppedCanvas({width:w,height:h,imageSmoothingQuality:'high'}).toBlob(function(blob){
-    var fname=item.name.replace(/\s+/g,'_')+'_'+cropperOrientation+'.jpg';
+    var orig=cropperQueue[pos];
+    var fname=orig.name.replace(/\.[^.]+$/,'')+'_recortada.jpg';
     var file=new File([blob],fname,{type:'image/jpeg'});
-    st.cart[cropperCurrentIdx].files.push(file);
-    renderItemFiles(cropperCurrentIdx);
-    closeCropper();
+    st.cart[idx].files.push(file);
+    renderItemFiles(idx);
+    cropperQueuePos++;
+    showCropperForCurrent();
   },'image/jpeg',0.92);
 }
 
